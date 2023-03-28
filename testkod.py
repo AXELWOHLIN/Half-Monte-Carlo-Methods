@@ -12,3 +12,4 @@ lib.tables
 w180 = lib.tables['74180.21c']
 mike = w180.energy
 print(mike)
+print('Tror det funkar nu')
