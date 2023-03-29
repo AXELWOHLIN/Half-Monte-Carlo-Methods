@@ -18,11 +18,11 @@ w180 = lib.tables['74180.21c']
 total_xs = w180.sigma_t
 energy = w180.energy
 """
-r = 'U235.nuss.10.10.2016/U235-n.ace_0000'
+r = open('U235.nuss.10.10.2016/U235-n.ace_0000','r')
 with open("U235.ace", "wb") as outfile:
     outfile.write(r.content)
 
-lib = pyne.ace.Library('W180.ace')
+lib = pyne.ace.Library('U235.ace')
 lib.read('74180.21c')
 lib.tables
 w180 = lib.tables['74180.21c']
