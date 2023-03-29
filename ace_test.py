@@ -17,6 +17,7 @@ total_xs = w180.sigma_t
 energy = w180.energy
 
 filename = 'csv_files/totalgodiva-Sheet1.csv'
-sensitvity_vector = np_csvimport.csv_import(filename)
+sens_vector_energy, sens_vector_values = np_csvimport.csv_import(filename)
+
 
 
