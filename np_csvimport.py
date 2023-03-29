@@ -1,10 +1,13 @@
 import numpy as np
 
+file = 'csv_files/totalgodiva-Sheet1.csv'
 # Load data from CSV file
-data = np.array(np.loadtxt('csv_files/totalgodiva-Sheet1.csv', delimiter=','))
-
-# Split the data into two separate arrays
-energy_eV = data[:, 0]
-k_sensitivity = data[:, 1]
-
-print(energy_eV)
+def csv_import(filename):
+    """
+    Args: Filename as string
+    Returns Energy np.array, k_sensitvity np.array
+    """
+    data = np.array(np.loadtxt(file, delimiter=','))
+    energy_eV = data[:, 0]
+    k_sensitivity = data[:, 1]
+    return energy_eV,k_sensitivity

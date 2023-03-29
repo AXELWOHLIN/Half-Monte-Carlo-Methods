@@ -2,7 +2,7 @@ import os
 import matplotlib.pyplot as plt
 import pyne.ace
 import requests
-from importcsv import 
+import np_csvimport
 
 url = "https://www-nds.iaea.org/wolfram/w180/beta3/W180.ace"
 r = requests.get(url)
