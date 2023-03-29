@@ -18,21 +18,22 @@ w180 = lib.tables['74180.21c']
 total_xs = w180.sigma_t
 energy = w180.energy
 """
-r = open('U235.nuss.10.10.2016/U235-n.ace_0000','r')
-with open("U235.ace", "wb") as outfile:
-    outfile.write(r.content)
+
+# Navigate to the file within the directory
+file_path = os.path.join('U235.nuss.10.10.2016', 'U235-n.ace_0000')
+
+# Open the file and read its contents
+with open(file_path, 'rb') as infile:
+    file_contents = infile.read()
+
+# Write the contents to a new file
+with open('U235.ace', 'wb') as outfile:
+    outfile.write(file_contents)
 
 lib = pyne.ace.Library('U235.ace')
-lib.read('74180.21c')
+lib.read('92235.00c')
 lib.tables
-w180 = lib.tables['74180.21c']
-total_xs = w180.sigma_t
-energy = w180.energy
-
-lib = pyne.ace.Library('W180.ace')
-lib.read('74180.21c')
-lib.tables
-w180 = lib.tables['74180.21c']
+w180 = lib.tables['92235.00c']
 total_xs = w180.sigma_t
 energy = w180.energy
 
@@ -49,5 +50,5 @@ plt.loglog(energy,total_xs)
 
 
 plt.figure(2)
-plt.loglog(sens_vector_energy,sens_vector_values)
+plt.plot(sens_vector_energy,sens_vector_values)
 plt.show()
