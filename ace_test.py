@@ -16,5 +16,7 @@ w180 = lib.tables['74180.21c']
 total_xs = w180.sigma_t
 energy = w180.energy
 
+filename = 'csv_files/totalgodiva-Sheet1.csv'
+sensitvity_vector = np_csvimport.csv_import(filename)
 
 
