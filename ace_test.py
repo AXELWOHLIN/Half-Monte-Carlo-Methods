@@ -3,9 +3,13 @@ import matplotlib.pyplot as plt
 import pyne.ace
 import requests
 import np_csvimport
+from scipy.interpolate import interp2d
+from scipy.interpolate import interp1d
 import numpy as np
 
 """
+#This is example code from the pyNE documentation for W_180 isotope
+
 url = "https://www-nds.iaea.org/wolfram/w180/beta3/W180.ace"
 r = requests.get(url)
 with open("W180.ace", "wb") as outfile:
@@ -39,16 +43,28 @@ energy = w180.energy
 
 filename = 'csv_files/totalgodiva-Sheet1.csv'
 sens_vector_energy, sens_vector_values = np_csvimport.csv_import(filename)
-
 energy *= 1e+06
-print(f"Energy xs shape is {np.shape(energy)}") #2600, 1e-11 till 5e+01
+
+#f_sens_vec =  interp1d(sens_vector_energy, sens_vector_values,bounds_error=False)
+#sens_vec_values_adjusted = f_sens_vec(energy)
+sens_vec_values_adjusted = np.interp(energy,sens_vector_energy,sens_vector_values)
+#sens_vec_values_adjusted = f_sens_vec(energy)
+
+print(f"Energy xs shape is {np.shape(energy)}") #2600, 1e-5 till 5e+06
 print(f"Sens vec energy shape is {np.shape(sens_vector_energy)}") # 239, 1e-05 20000000.0
 
 
 plt.figure()
 plt.loglog(energy,total_xs)
-
+plt.title("U235 energy and xs")
 
 plt.figure(2)
 plt.plot(sens_vector_energy,sens_vector_values)
+plt.title("Original sens vector")
+
+plt.figure(3)
+plt.plot(energy,sens_vec_values_adjusted)
+plt.title("Interpolated sens vector")
 plt.show()
+
+print(f"Our scalar is {np.dot(sens_vec_values_adjusted,total_xs.transpose())}")
