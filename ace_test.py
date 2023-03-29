@@ -20,6 +20,7 @@ energy = w180.energy
 filename = 'csv_files/totalgodiva-Sheet1.csv'
 sens_vector_energy, sens_vector_values = np_csvimport.csv_import(filename)
 
+energy *= 1e+06
 print(f"Energy xs shape is {np.shape(energy)}") #2600, 1e-11 till 5e+01
 print(f"Sens vec energy shape is {np.shape(sens_vector_energy)}") # 239, 1e-05 20000000.0
 
