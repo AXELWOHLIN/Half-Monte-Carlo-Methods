@@ -20,6 +20,3 @@ def import_csv(file_path):
     
     return data
 
-
-my_data = import_csv('csv_files/totalgodiva-Sheet1.csv')
-print(my_data)
