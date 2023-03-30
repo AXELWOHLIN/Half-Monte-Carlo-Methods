@@ -21,6 +21,6 @@ reactions = w180.reactions
 
 #print(reactions)
 sigma = reactions[2].sigma
-print(sigma)
+print(reactions)
 
 print(name(37))
