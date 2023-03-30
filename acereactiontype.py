@@ -23,4 +23,4 @@ reactions = w180.reactions
 sigma = reactions[2].sigma
 print(reactions)
 
-print(mt(""))
+print(mt("2n"))
