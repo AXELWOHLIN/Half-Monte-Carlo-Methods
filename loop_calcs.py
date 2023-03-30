@@ -34,5 +34,8 @@ for i in file_indxs:
     energy *= 1e+06
 
     sens_vec_values_adjusted = np.interp(energy,sens_vector_energy,sens_vector_values)
-    results_vector[int(i),0] = np.dot(sens_vec_values_adjusted,total_xs.transpose())
+    if int(i)>=44:
+        results_vector[int(i)-1,0] = np.dot(sens_vec_values_adjusted,total_xs.transpose())
+    else:
+        results_vector[int(i),0] = np.dot(sens_vec_values_adjusted,total_xs.transpose())
     print(f"Our scalar is {np.dot(sens_vec_values_adjusted,total_xs.transpose())}")
