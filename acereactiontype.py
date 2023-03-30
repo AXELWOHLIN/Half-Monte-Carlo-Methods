@@ -20,5 +20,7 @@ w180 = lib.tables['92235.00c']
 reactions = w180.reactions
 
 #print(reactions)
+sigma = reactions[2].sigma
+print(sigma)
 
 print(mt(""))
