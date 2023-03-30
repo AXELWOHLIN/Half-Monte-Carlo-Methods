@@ -1,6 +1,6 @@
 import numpy as np
 
-file = 'csv_files/totalgodiva-Sheet1.csv'
+file = 'csv_files/Godiva_total.csv'
 # Load data from CSV file
 def csv_import(filename):
     """
