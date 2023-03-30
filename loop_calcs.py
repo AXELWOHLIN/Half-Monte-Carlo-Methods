@@ -7,9 +7,11 @@ from scipy.interpolate import interp2d
 from scipy.interpolate import interp1d
 import numpy as np
 
-results_vector = np.zeros(shape = (100,1))
+results_vector = np.zeros(shape = (99,1))
 file_indxs = ["00","01","02","03","04","05","06","07","08","09"] + list(range(10,100))
 for i in file_indxs:
+    if int(i) == 44:
+        continue
     # Navigate to the file within the directory
     file_path = os.path.join('U235.nuss.10.10.2016', f'U235-n.ace_00{i}')
     # Open the file and read its contents
