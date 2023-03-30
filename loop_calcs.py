@@ -72,7 +72,7 @@ pdf = 1 / (std_dev * np.sqrt(2 * np.pi)) * np.exp(-0.5 * ((x - mean) / std_dev) 
 plt.plot(x, pdf)
 
 # Set the plot title and axis labels
-plt.title('Normal Distribution of Results Vector')
+plt.title('k_eff ')
 plt.xlabel('Values')
 plt.ylabel('Probability Density')
 
