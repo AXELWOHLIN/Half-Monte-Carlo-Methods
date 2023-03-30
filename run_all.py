@@ -9,8 +9,10 @@ import numpy as np
 from pyne.rxname import *
 
 #First number is MT and second is filename
-name_dict = {"n,2n":("2n","n_2n"),"n,3n":("z_3n","n_3n"),"n,4n":("z_4n","n_4n") \
-                ,"fission":("fission","fission"), "elastic":("elastic","elastic") \
+#name_dict = {"n,2n":("2n","n_2n"),"n,3n":("z_3n","n_3n"),"n,4n":("z_4n","n_4n") \
+#               ,"fission":("fission","fission"), "elastic":("elastic","elastic") \
+ #                   ,"inelastic":("inelastic","inelastic"),"total":("total","total")}
+name_dict = {"fission":("fission","fission"), "elastic":("elastic","elastic") \
                     ,"inelastic":("inelastic","inelastic"),"total":("total","total")}
 
 # list all the keys in name_dict
@@ -63,6 +65,11 @@ for key in keys:
         xs = w180.reactions[reaction_ind].sigma
         energy = w180.energy
 
+        filename = f'csv_files/Godiva_{filespec}.csv'
+        sens_vector_energy, sens_vector_values = np_csvimport.csv_import(filename)
+        energy *= 1e+06
+        sens_vec_values_adjusted = np.interp(energy,sens_vector_energy,sens_vector_values)
+
         tmp = np.dot(sens_vec_values_adjusted,(xs.transpose()-central_xs.transpose()))
         if int(i)>=44:
             results_vector[int(i)-2,0] = tmp
@@ -90,3 +97,4 @@ for key in keys:
     plt.ylabel('Probability Density')
 
     plt.savefig(f'result_plots/figure_{filespec}.png')
+    plt.clf()
