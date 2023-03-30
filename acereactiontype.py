@@ -1,6 +1,6 @@
 import os
 import pyne.ace
-import pyne.rxname
+from pyne.rxname import *
 
 # Navigate to the file within the directory
 file_path = os.path.join('U235.nuss.10.10.2016', 'U235-n.ace_0000')
@@ -19,4 +19,6 @@ lib.read('92235.00c')
 w180 = lib.tables['92235.00c']
 reactions = w180.reactions
 
+#print(reactions)
 
+print(mt(""))

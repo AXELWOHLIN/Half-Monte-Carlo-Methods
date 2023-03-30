@@ -72,9 +72,10 @@ pdf = 1 / (std_dev * np.sqrt(2 * np.pi)) * np.exp(-0.5 * ((x - mean) / std_dev) 
 plt.plot(x, pdf)
 
 # Set the plot title and axis labels
-plt.title('k_eff ')
+plt.title('delta k_eff total_xs ')
 plt.xlabel('Values')
 plt.ylabel('Probability Density')
 
 # Show the plot
 plt.show()
+print(f"Standard deviation is: {std_dev}")
