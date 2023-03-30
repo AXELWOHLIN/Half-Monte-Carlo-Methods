@@ -18,5 +18,6 @@ lib = pyne.ace.Library('U235.ace')
 lib.read('92235.00c')
 w180 = lib.tables['92235.00c']
 reactions = w180.reactions
-
+sigma = reactions[2].sigma
+print(sigma)
 
