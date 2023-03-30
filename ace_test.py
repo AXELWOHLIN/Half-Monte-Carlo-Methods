@@ -53,7 +53,6 @@ sens_vec_values_adjusted = np.interp(energy,sens_vector_energy,sens_vector_value
 print(f"Energy xs shape is {np.shape(energy)}") #2600, 1e-5 till 5e+06
 print(f"Sens vec energy shape is {np.shape(sens_vector_energy)}") # 239, 1e-05 20000000.0
 
-
 plt.figure()
 plt.loglog(energy,total_xs)
 plt.title("U235 energy and xs")
