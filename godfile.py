@@ -41,7 +41,10 @@ lib = pyne.ace.Library('U235central.ace')
 lib.read('92235.00c')
 lib.tables
 centralU235 = lib.tables['92235.00c']
-central_xs = centralU235.reactions[reaction_ind].sigma
+if chosen_key == "total":
+    central_xs = centralU235.sigma_t
+else:
+    central_xs = centralU235.reactions[reaction_ind].sigma
 energy = centralU235.energy
 
 filename = f'csv_files/Godiva_{filespec}.csv'
@@ -69,8 +72,12 @@ for i in file_indxs:
     lib.read('92235.00c')
     lib.tables
     w180 = lib.tables['92235.00c']
-    xs = w180.reactions[reaction_ind].sigma
+    if chosen_key == "total":
+        xs = w180.sigma_t
+    else:
+        xs = w180.reactions[reaction_ind].sigma
     energy = w180.energy
+
 
     tmp = np.dot(sens_vec_values_adjusted,(xs.transpose()-central_xs.transpose()))
     if int(i)>=44:
