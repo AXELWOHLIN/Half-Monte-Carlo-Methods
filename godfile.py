@@ -43,9 +43,11 @@ lib.tables
 centralU235 = lib.tables['92235.00c']
 if chosen_key == "total":
     central_xs = centralU235.sigma_t
+    energy = centralU235.energy
 else:
     central_xs = centralU235.reactions[reaction_ind].sigma
-energy = centralU235.energy
+    spec_reaction = centralU235.reactions[reaction_ind]
+    energy = centralU235.energy[spec_reaction.IE:]
 
 filename = f'csv_files/Godiva_{filespec}.csv'
 sens_vector_energy, sens_vector_values = np_csvimport.csv_import(filename)
