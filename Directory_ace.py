@@ -58,6 +58,7 @@ sens_vec_values_adjusted = np.interp(energy,sens_vector_energy,sens_vector_value
 
 
 #Following is changed and should make a function on its own
+print("Choose a suitable directory with ace files!")
 root = tk.Tk()
 root.withdraw()
 directory = filedialog.askdirectory()
@@ -98,7 +99,6 @@ for file in os.listdir(directory):
 
 mean = np.mean(results_vector)
 std_dev = np.std(results_vector)
-print(results_vector)
 # Create a histogram of the vector with 25 bins
 plt.hist(results_vector, bins=25, density=True)
 
