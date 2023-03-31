@@ -9,11 +9,11 @@ import numpy as np
 from pyne.rxname import *
 
 #First number is MT and second is filename
-#name_dict = {"n,2n":("2n","n_2n"),"n,3n":("z_3n","n_3n"),"n,4n":("z_4n","n_4n") \
-#               ,"fission":("fission","fission"), "elastic":("elastic","elastic") \
- #                   ,"inelastic":("inelastic","inelastic"),"total":("total","total")}
-name_dict = {"fission":("fission","fission"), "elastic":("elastic","elastic") \
+name_dict = {"n,2n":("2n","n_2n"),"n,3n":("z_3n","n_3n"),"n,4n":("z_4n","n_4n") \
+              ,"fission":("fission","fission"), "elastic":("elastic","elastic") \
                     ,"inelastic":("inelastic","inelastic"),"total":("total","total")}
+#name_dict = {"fission":("fission","fission"), "elastic":("elastic","elastic") \
+  #                  ,"inelastic":("inelastic","inelastic"),"total":("total","total")}
 
 # list all the keys in name_dict
 keys = list(name_dict.keys())
@@ -34,8 +34,13 @@ for key in keys:
     lib.read('92235.00c')
     lib.tables
     centralU235 = lib.tables['92235.00c']
-    central_xs = centralU235.reactions[reaction_ind].sigma
-    energy = centralU235.energy
+    if key == "total":
+        central_xs = centralU235.sigma_t
+        energy = centralU235.energy
+    else:
+        central_xs = centralU235.reactions[reaction_ind].sigma
+        spec_reaction = centralU235.reactions[reaction_ind]
+        energy = centralU235.energy[spec_reaction.IE:]
 
     filename = f'csv_files/Godiva_{filespec}.csv'
     sens_vector_energy, sens_vector_values = np_csvimport.csv_import(filename)
@@ -62,8 +67,14 @@ for key in keys:
         lib.read('92235.00c')
         lib.tables
         w180 = lib.tables['92235.00c']
-        xs = w180.reactions[reaction_ind].sigma
-        energy = w180.energy
+        if key == "total":
+            xs = w180.sigma_t
+            energy = w180.energy
+        else:
+            xs = w180.reactions[reaction_ind].sigma
+            spec_reaction = w180.reactions[reaction_ind]
+            energy = w180.energy[spec_reaction.IE:]
+        
 
         filename = f'csv_files/Godiva_{filespec}.csv'
         sens_vector_energy, sens_vector_values = np_csvimport.csv_import(filename)
