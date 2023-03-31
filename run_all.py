@@ -61,9 +61,9 @@ for key in keys:
         lib = pyne.ace.Library('U235.ace')
         lib.read('92235.00c')
         lib.tables
-        w180 = lib.tables['92235.00c']
-        xs = w180.reactions[reaction_ind].sigma
-        energy = w180.energy
+        u235 = lib.tables['92235.00c']
+        xs = u235.reactions[reaction_ind].sigma
+        energy = u235.energy
 
         filename = f'csv_files/Godiva_{filespec}.csv'
         sens_vector_energy, sens_vector_values = np_csvimport.csv_import(filename)
