@@ -71,12 +71,12 @@ for i in file_indxs:
     lib = pyne.ace.Library('U235.ace')
     lib.read('92235.00c')
     lib.tables
-    w180 = lib.tables['92235.00c']
+    u235 = lib.tables['92235.00c']
     if chosen_key == "total":
-        xs = w180.sigma_t
+        xs = u235.sigma_t
     else:
-        xs = w180.reactions[reaction_ind].sigma
-    energy = w180.energy
+        xs = u235.reactions[reaction_ind].sigma
+    energy = u235.energy
 
 
     tmp = np.dot(sens_vec_values_adjusted,(xs.transpose()-central_xs.transpose()))
