@@ -7,6 +7,8 @@ from scipy.interpolate import interp2d
 from scipy.interpolate import interp1d
 import numpy as np
 from pyne.rxname import *
+import tkinter as tk
+from tkinter import filedialog
 
 #First number is MT and second is filename
 name_dict = {"n,2n":("2n","n_2n"),"n,3n":("z_3n","n_3n"),"n,4n":("z_4n","n_4n") \
@@ -55,8 +57,13 @@ energy *= 1e+06
 sens_vec_values_adjusted = np.interp(energy,sens_vector_energy,sens_vector_values)
 
 
+#Following is changed and should make a function on its own
+root = tk.Tk()
+root.withdraw()
+directory = filedialog.askdirectory()
+print("Selected directory: ", directory)
 results_vector = []
-directory = os.fsencode('U235.nuss.10.10.2016')
+#directory = os.fsencode('U235.nuss.10.10.2016')
 
 for file in os.listdir(directory):
     filename = os.fsdecode(file)
