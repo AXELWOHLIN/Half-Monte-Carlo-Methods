@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<geometry>
+  <cell id="1" material="1" name="fuel" region="-8" universe="2" />
+  <cell id="3" material="void" name="outer" region="9 -10 11 -12 8 -13 14" universe="2" />
+  <surface coeffs="0.0 0.0 0.0 8.5" id="8" type="sphere" />
+  <surface boundary="vacuum" coeffs="-25.0" id="9" type="x-plane" />
+  <surface boundary="vacuum" coeffs="25.0" id="10" type="x-plane" />
+  <surface boundary="vacuum" coeffs="-25.0" id="11" type="y-plane" />
+  <surface boundary="vacuum" coeffs="25.0" id="12" type="y-plane" />
+  <surface boundary="vacuum" coeffs="25.0" id="13" type="z-plane" />
+  <surface boundary="vacuum" coeffs="-25.0" id="14" type="z-plane" />
+</geometry>
