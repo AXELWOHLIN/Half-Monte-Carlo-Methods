@@ -111,9 +111,9 @@ def central_file_decider(directory):
 
 
 
-def sense_interp(reaction_dict, reaction_ind , ace_file):
+def sense_interp(reaction_dict, reaction_ind , ace_file, directory):
     
-    centralU235 = ace_reader(ace_file)
+    centralU235 = ace_reader(ace_file, directory)
     
     if reaction_ind == 1:
         xs = centralU235.sigma_t
@@ -131,14 +131,14 @@ def sense_interp(reaction_dict, reaction_ind , ace_file):
 
 
 
-def ace_reader(ace_file):
-    with open(ace_file, 'rb') as infile:
+def ace_reader(ace_file, directory):
+    file_path=os.path.join(directory,ace_file)
+    with open(file_path, 'rb') as infile:
         ace_file_contents = infile.read()
 
     # Write the contents to a new file
     with open('U235central.ace', 'wb') as outfile:
         outfile.write(ace_file_contents)
-
     lib = pyne.ace.Library('U235central.ace')
     lib.read('92235.00c')
     lib.tables
@@ -151,12 +151,12 @@ def ace_reader(ace_file):
 def HMCcalc(reaction_dict, reaction_ind, directory, central_file):
     results_vector = []
     
-    _, central_xs = sense_interp(reaction_dict, reaction_ind, central_file)
+    _, central_xs = sense_interp(reaction_dict, reaction_ind, central_file, directory)
     
     for file in os.listdir(directory):
         filename = os.fsdecode(file)
         if ".ace" in filename:
-            sens_vec_values_adjusted, xs = sense_interp(reaction_dict, reaction_ind, filename)
+            sens_vec_values_adjusted, xs = sense_interp(reaction_dict, reaction_ind, filename, directory)
             tmp = np.dot(sens_vec_values_adjusted,(xs.transpose()-central_xs.transpose()))
             results_vector.append(tmp)
             #print(f"Our scalar is {tmp}")
