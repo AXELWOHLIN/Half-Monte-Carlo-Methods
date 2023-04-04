@@ -56,16 +56,16 @@ def add_reactions():
 
 def central_file(directory):
     choice = input("Do you want to choose central file? [y/n]: ")
-        if choice == "y":
-            # Create a Tkinter root window to prompt user to choose sensitivity vector
-            root = Tk()
-            # Hide the main window
-            root.withdraw()
-            # Show the file dialog and get the selected file
-            central_file = askopenfilename()
-        elif choice == "n"
-            for entry in os.scandir(directory):
-                if entry.is_file() and ".ace" in entry.name:
+    if choice == "y":
+        # Create a Tkinter root window to prompt user to choose sensitivity vector
+        root = Tk()
+        # Hide the main window
+        root.withdraw()
+        # Show the file dialog and get the selected file
+        central_file = askopenfilename()
+    elif choice == "n":
+        for entry in os.scandir(directory):
+            if entry.is_file() and ".ace" in entry.name:
                     central_file
                     break
     return central_file
