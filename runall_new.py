@@ -13,6 +13,12 @@ from tkinter.filedialog import askopenfilename
 
 
 def ace_directory(dir=0):
+    """Creates a Tkinter root window and prompts the user to choose a directory with ace-files. 
+    Parameters: 
+        dir=0: Automatically jumps to "Choose a suitable directory with ace files"
+    Returns:
+        directory: A string with the chosen filename. 
+    """
     if dir == 0:
         print("Choose a suitable directory with ace files!")
         root = Tk()
@@ -24,8 +30,15 @@ def ace_directory(dir=0):
     return directory 
 
 def csv_files():
+    """Prompts the user to choose a sensitivity vector by creating a Tkinter root window.
+    The sensitivity vectors is then saved in one vector with energies and one with the corresponding values.  
+    Parameters: 
+        none
+    Returns:
+        sens_vector_energy: a sensitivity vector in eV 
+        sens_vector_values: The corresponding values to the sensitivity vector 
+    """
     print("\nPlease choose a sensitivity vector in .csv format:")
-    # Create a Tkinter root window to prompt user to choose sensitivity vector
     root = Tk()
     # Hide the main window
     root.withdraw()
@@ -35,6 +48,13 @@ def csv_files():
     return sens_vector_energy, sens_vector_values
 
 def choose_reaction():
+    """Prompts the user to choose a reaction by presenting a series of reactions. The user chooses reaction 
+    by typing the corresponding number. It then returns the MT number that corresponds to this reaction. 
+    Parameters: 
+        none
+    Returns:
+        reaction_ind: an integer that corresponds to the MT number of the reaction type.
+    """
     #First number is MT and second is filename
     name_dict = {"n,2n":("2n","n_2n"),"n,3n":("z_3n","n_3n"),"n,4n":("z_4n","n_4n") \
                     ,"fission":("fission","fission"), "elastic":("elastic","elastic") \
@@ -53,11 +73,16 @@ def choose_reaction():
     chosen_key = keys[int(choice)-1]
     mt_number,filespec, = name_dict[chosen_key]
     # use the filename and mt_number variables to do further processing
-
     reaction_ind = mt(mt_number)
     return(reaction_ind)
 
 def add_reactions():
+    """Gives the user the alternative to add a reaction to the calculations. 
+    Parameters: 
+        none
+    Returns:
+        reaction_dict: A dictionairy with the MT numbers as keys and the sensitivity vectors as values. 
+    """
     choice = "y"
     reaction_dict = {}
     while choice == "y":
@@ -86,9 +111,9 @@ def central_file_decider(directory):
 
 
 
-def sense_interp(reaction_dict, reaction_ind , ace_file):
+def sense_interp(reaction_dict, reaction_ind , ace_file, directory):
     
-    centralU235 = ace_reader(ace_file)
+    centralU235 = ace_reader(ace_file, directory)
     
     if reaction_ind == 1:
         xs = centralU235.sigma_t
@@ -106,15 +131,14 @@ def sense_interp(reaction_dict, reaction_ind , ace_file):
 
 
 
-def ace_reader(ace_file):
-    file_path = os.path.join('U235.nuss.10.10.2016', ace_file)
+def ace_reader(ace_file, directory):
+    file_path=os.path.join(directory,ace_file)
     with open(file_path, 'rb') as infile:
         ace_file_contents = infile.read()
 
     # Write the contents to a new file
     with open('U235central.ace', 'wb') as outfile:
         outfile.write(ace_file_contents)
-
     lib = pyne.ace.Library('U235central.ace')
     lib.read('92235.00c')
     lib.tables
@@ -124,16 +148,15 @@ def ace_reader(ace_file):
 
 
 
-def HMCcalc(reaction_dict, reaction_ind, directory):
+def HMCcalc(reaction_dict, reaction_ind, directory, central_file):
     results_vector = []
     
-    central_file = central_file_decider(directory)
-    _, central_xs = sense_interp(reaction_dict, reaction_ind, central_file)
+    _, central_xs = sense_interp(reaction_dict, reaction_ind, central_file, directory)
     
     for file in os.listdir(directory):
         filename = os.fsdecode(file)
         if ".ace" in filename:
-            sens_vec_values_adjusted, xs = sense_interp(reaction_dict, reaction_ind, filename)
+            sens_vec_values_adjusted, xs = sense_interp(reaction_dict, reaction_ind, filename, directory)
             tmp = np.dot(sens_vec_values_adjusted,(xs.transpose()-central_xs.transpose()))
             results_vector.append(tmp)
             #print(f"Our scalar is {tmp}")
@@ -149,9 +172,10 @@ def main():
     directory = ace_directory()
     reaction_dir = add_reactions()
     reactions_ind = list(reaction_dir.keys())
+    central_file=central_file_decider(directory)
     
     for reaction_ind in reactions_ind:
-        results_vector = HMCcalc(reaction_dir, reaction_ind, directory)
+        results_vector = HMCcalc(reaction_dir, reaction_ind, directory, central_file)
         
         
         mean = np.mean(results_vector)
