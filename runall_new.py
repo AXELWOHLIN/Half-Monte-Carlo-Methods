@@ -107,8 +107,7 @@ def sense_interp(reaction_dict, reaction_ind , ace_file):
 
 
 def ace_reader(ace_file):
-    file_path = os.path.join('U235.nuss.10.10.2016', ace_file)
-    with open(file_path, 'rb') as infile:
+    with open(ace_file, 'rb') as infile:
         ace_file_contents = infile.read()
 
     # Write the contents to a new file
@@ -124,10 +123,9 @@ def ace_reader(ace_file):
 
 
 
-def HMCcalc(reaction_dict, reaction_ind, directory):
+def HMCcalc(reaction_dict, reaction_ind, directory, central_file):
     results_vector = []
     
-    central_file = central_file_decider(directory)
     _, central_xs = sense_interp(reaction_dict, reaction_ind, central_file)
     
     for file in os.listdir(directory):
@@ -149,9 +147,10 @@ def main():
     directory = ace_directory()
     reaction_dir = add_reactions()
     reactions_ind = list(reaction_dir.keys())
+    central_file=central_file_decider(directory)
     
     for reaction_ind in reactions_ind:
-        results_vector = HMCcalc(reaction_dir, reaction_ind, directory)
+        results_vector = HMCcalc(reaction_dir, reaction_ind, directory, central_file)
         
         
         mean = np.mean(results_vector)
