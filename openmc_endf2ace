@@ -1,8 +1,0 @@
-import openmc
-import math
-import os
-import numpy as np
-import matplotlib.pyplot as plt
-
-filename = "endf_test/n-W180-rand-0002"
-openmc.data.njoy.make_ace(filename)
