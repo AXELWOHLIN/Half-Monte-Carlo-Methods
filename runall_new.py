@@ -22,7 +22,7 @@ def ace_directory(dir=0):
     """
     if dir==0:
         try:
-            root = tk.Tk()
+            root = Tk.Tk()
             root.withdraw()
             directory = filedialog.askdirectory()
             print("Selected directory: ", directory)
@@ -45,7 +45,7 @@ def csv_files():
     """
     try:
         print("\nPlease choose a sensitivity vector in .csv format:")
-        root = tk.Tk()
+        root = Tk.Tk()
         # Hide the main window
         root.withdraw()
         # Show the file dialog and get the selected file
@@ -101,7 +101,7 @@ def central_file_decider(directory):
     if choice == "y":
         try:
             # Create a Tkinter root window to prompt user to choose central file
-            root = tk.Tk()
+            root = Tk.Tk()
             # Hide the main window
             root.withdraw()
             # Show the file dialog and get the selected file
