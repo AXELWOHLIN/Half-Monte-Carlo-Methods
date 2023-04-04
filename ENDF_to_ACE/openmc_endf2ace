@@ -8,6 +8,6 @@ filename = "ENDF_to_ACE/endf_test_2/n-W180-rand-0000"
 openmc.data.njoy.make_ace(filename)
 
 openmc.data.njoy.make_ace(filename, temperatures= 293.6, acer= "ENDF_to_ACE/processed_ace_files, xsdir=None",\
-                        output_dir=None, pendf=False, error=0.001, broadr=None, \
+                        output_dir="ENDF_to_ACE/processed_ace_files", pendf=False, error=0.001, broadr=None, \
                         heatr=None, gaspr=None, purr=None, evaluation=None, \
                         smoothing=True)
