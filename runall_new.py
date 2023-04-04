@@ -13,6 +13,12 @@ from tkinter.filedialog import askopenfilename
 
 
 def ace_directory(dir=0):
+    """Creates a Tkinter root window and prompts the user to choose a directory with ace-files. 
+    Parameters: 
+        dir=0: Automatically jumps to "Choose a suitable directory with ace files"
+    Returns:
+        directory: A string with the chosen filename. 
+    """
     if dir == 0:
         print("Choose a suitable directory with ace files!")
         root = Tk()
@@ -24,8 +30,14 @@ def ace_directory(dir=0):
     return directory 
 
 def csv_files():
+    """Creates a Tkinter root window and prompts the user to choose a sensitivity vector. 
+    Parameters: 
+        none
+    Returns:
+        sens_vector_energy:
+        sens_vector_values:
+    """
     print("\nPlease choose a sensitivity vector in .csv format:")
-    # Create a Tkinter root window to prompt user to choose sensitivity vector
     root = Tk()
     # Hide the main window
     root.withdraw()
