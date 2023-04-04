@@ -139,6 +139,8 @@ def ace_reader(ace_file, directory):
     lib.tables
     centralU235 = lib.tables['92235.00c']
     
+    os.remove('U235central.ace')
+    
     return centralU235
 
 
