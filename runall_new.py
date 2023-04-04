@@ -8,6 +8,7 @@ from scipy.interpolate import interp1d
 import numpy as np
 from pyne.rxname import *
 from tkinter import Tk
+from tkinter import *
 from tkinter import filedialog
 from tkinter.filedialog import askopenfilename
 
@@ -19,15 +20,19 @@ def ace_directory(dir=0):
     Returns:
         directory: A string with the chosen filename. 
     """
-    if dir == 0:
-        print("Choose a suitable directory with ace files!")
-        root = Tk()
-        root.withdraw()
-        directory = filedialog.askdirectory()
-        print("Selected directory: ", directory)
+    if dir==0:
+        try:
+            root = Tk.Tk()
+            root.withdraw()
+            directory = filedialog.askdirectory()
+            print("Selected directory: ", directory)
+        except:
+            print("Tkinter is not available. Please enter the directory path manually:")
+            directory = input()
+        return directory
     else:
         directory = dir
-    return directory 
+    return directory
 
 def csv_files():
     """Prompts the user to choose a sensitivity vector by creating a Tkinter root window.
@@ -38,12 +43,16 @@ def csv_files():
         sens_vector_energy: a sensitivity vector in eV 
         sens_vector_values: The corresponding values to the sensitivity vector 
     """
-    print("\nPlease choose a sensitivity vector in .csv format:")
-    root = Tk()
-    # Hide the main window
-    root.withdraw()
-    # Show the file dialog and get the selected file
-    filename = askopenfilename()
+    try:
+        print("\nPlease choose a sensitivity vector in .csv format:")
+        root = Tk.Tk()
+        # Hide the main window
+        root.withdraw()
+        # Show the file dialog and get the selected file
+        filename = askopenfilename()
+    except:
+        print("Tkinter is not available. Please enter the file path manually:")
+        filename = input()
     sens_vector_energy, sens_vector_values = np_csvimport.csv_import(filename)
     return sens_vector_energy, sens_vector_values
 
@@ -95,16 +104,20 @@ def add_reactions():
 def central_file_decider(directory):
     choice = input("Do you want to choose central file? [y/n]: ")
     if choice == "y":
-        # Create a Tkinter root window to prompt user to choose sensitivity vector
-        root = Tk()
-        # Hide the main window
-        root.withdraw()
-        # Show the file dialog and get the selected file
-        central_file = askopenfilename()
+        try:
+            # Create a Tkinter root window to prompt user to choose central file
+            root = Tk.Tk()
+            # Hide the main window
+            root.withdraw()
+            # Show the file dialog and get the selected file
+            central_file = askopenfilename()
+        except:
+            print("Tkinter is not available. Please enter the file path manually:")
+            central_file = input()
     elif choice == "n":
         for entry in os.scandir(directory):
             if entry.is_file() and ".ace" in entry.name:
-                central_file = entry
+                central_file = entry.path
                 break
     return central_file
 
@@ -133,7 +146,7 @@ def sense_interp(reaction_dict, reaction_ind , ace_file, directory):
 
 def ace_reader(ace_file, directory):
     file_path=os.path.join(directory,ace_file)
-    with open(file_path, 'rb') as infile:
+    with open(ace_file, 'rb') as infile:
         ace_file_contents = infile.read()
 
     # Write the contents to a new file
@@ -143,6 +156,8 @@ def ace_reader(ace_file, directory):
     lib.read('92235.00c')
     lib.tables
     centralU235 = lib.tables['92235.00c']
+    
+    os.remove('U235central.ace')
     
     return centralU235
 
