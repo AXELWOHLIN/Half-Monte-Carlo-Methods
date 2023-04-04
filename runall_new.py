@@ -30,12 +30,13 @@ def ace_directory(dir=0):
     return directory 
 
 def csv_files():
-    """Creates a Tkinter root window and prompts the user to choose a sensitivity vector. 
+    """Prompts the user to choose a sensitivity vector by creating a Tkinter root window.
+    The sensitivity vectors is then saved in one vector with energies and one with the corresponding values.  
     Parameters: 
         none
     Returns:
-        sens_vector_energy:
-        sens_vector_values:
+        sens_vector_energy: a sensitivity vector in eV 
+        sens_vector_values: The corresponding values to the sensitivity vector 
     """
     print("\nPlease choose a sensitivity vector in .csv format:")
     root = Tk()
@@ -47,6 +48,13 @@ def csv_files():
     return sens_vector_energy, sens_vector_values
 
 def choose_reaction():
+    """Prompts the user to choose a reaction by presenting a series of reactions. The user choose reaction 
+    by typing the corresponding number. 
+    Parameters: 
+        none
+    Returns:
+        reaction_ind:
+    """
     #First number is MT and second is filename
     name_dict = {"n,2n":("2n","n_2n"),"n,3n":("z_3n","n_3n"),"n,4n":("z_4n","n_4n") \
                     ,"fission":("fission","fission"), "elastic":("elastic","elastic") \
