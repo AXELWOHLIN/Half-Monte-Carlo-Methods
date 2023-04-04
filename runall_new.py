@@ -13,7 +13,7 @@ from tkinter.filedialog import askopenfilename
 
 
 def ace_directory(dir=0):
-    """Creates a Tkinter root window and prompts the user to choose a directory with ace-files. 
+    """Prompts the user to choose a directory with ace-files by creating a Tkinter root window. 
     Parameters: 
         dir=0: Automatically jumps to "Choose a suitable directory with ace files"
     Returns:
@@ -93,6 +93,13 @@ def add_reactions():
     return reaction_dict
 
 def central_file_decider(directory):
+    """Decides which central file to use by asking the user if they want to choose their own central file
+    or not. If not, it takes the first ACE-file in the directory as its central file. 
+    Parameters: 
+        directory: A string with the chosen filename
+    Returns:
+        central_file: the name of the directory that will be use as the central file
+    """
     choice = input("Do you want to choose central file? [y/n]: ")
     if choice == "y":
         # Create a Tkinter root window to prompt user to choose sensitivity vector
@@ -106,13 +113,21 @@ def central_file_decider(directory):
             if entry.is_file() and ".ace" in entry.name:
                 central_file = entry
                 break
+    print(central_file)
+    print(type(central_file))
     return central_file
 
 
 
 
 def sense_interp(reaction_dict, reaction_ind , ace_file, directory):
-    
+    """Decides which central file to use by asking the user if they want to choose their own central file
+    or not. If not, it takes the first ACE-file in the directory as its central file. 
+    Parameters: 
+        directory: A string with the chosen filename
+    Returns:
+        central_file: the name of the directory that will be use as the central file
+    """
     centralU235 = ace_reader(ace_file, directory)
     
     if reaction_ind == 1:
@@ -129,7 +144,7 @@ def sense_interp(reaction_dict, reaction_ind , ace_file, directory):
     return  sens_vec_values_adjusted, xs
 
 
-
+#haha hello!
 
 def ace_reader(ace_file, directory):
     file_path=os.path.join(directory,ace_file)
