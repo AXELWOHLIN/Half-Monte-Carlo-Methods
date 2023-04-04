@@ -48,12 +48,12 @@ def csv_files():
     return sens_vector_energy, sens_vector_values
 
 def choose_reaction():
-    """Prompts the user to choose a reaction by presenting a series of reactions. The user choose reaction 
-    by typing the corresponding number. 
+    """Prompts the user to choose a reaction by presenting a series of reactions. The user chooses reaction 
+    by typing the corresponding number. It then returns the MT number that corresponds to this reaction. 
     Parameters: 
         none
     Returns:
-        reaction_ind:
+        reaction_ind: an integer that corresponds to the MT number of the reaction type.
     """
     #First number is MT and second is filename
     name_dict = {"n,2n":("2n","n_2n"),"n,3n":("z_3n","n_3n"),"n,4n":("z_4n","n_4n") \
@@ -73,11 +73,16 @@ def choose_reaction():
     chosen_key = keys[int(choice)-1]
     mt_number,filespec, = name_dict[chosen_key]
     # use the filename and mt_number variables to do further processing
-
     reaction_ind = mt(mt_number)
     return(reaction_ind)
 
 def add_reactions():
+    """Gives the user the alternative to add a reaction to the calculations. 
+    Parameters: 
+        none
+    Returns:
+        reaction_dict: A dictionairy with the MT numbers as keys and the sensitivity vectors as values. 
+    """
     choice = "y"
     reaction_dict = {}
     while choice == "y":
