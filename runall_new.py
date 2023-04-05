@@ -134,13 +134,7 @@ def central_file_decider(directory):
 
 
 def sense_interp(reaction_dict, reaction_ind , ace_file, directory):
-    """Decides which central file to use by asking the user if they want to choose their own central file
-    or not. If not, it takes the first ACE-file in the directory as its central file. 
-    Parameters: 
-        directory: A string with the chosen filename
-    Returns:
-        central_file: the name of the directory that will be use as the central file
-    """
+    
     centralU235 = ace_reader(ace_file, directory)
     
     if reaction_ind == 1:
@@ -157,7 +151,7 @@ def sense_interp(reaction_dict, reaction_ind , ace_file, directory):
     return  sens_vec_values_adjusted, xs
 
 
-#haha hello!
+
 
 def ace_reader(ace_file, directory):
     file_path=os.path.join(directory,ace_file)
