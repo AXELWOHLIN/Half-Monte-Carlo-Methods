@@ -24,7 +24,7 @@ energy = w180.energy
 """
 
 # Navigate to the file within the directory
-file_path = "ace"#os.path.join('U235.nuss.10.10.2016', 'U235-n.ace_0000')
+file_path = "processed_ace_files/mike"#"ace"#os.path.join('U235.nuss.10.10.2016', 'U235-n.ace_0000')
 
 # Open the file and read its contents
 with open(file_path, 'rb') as infile:

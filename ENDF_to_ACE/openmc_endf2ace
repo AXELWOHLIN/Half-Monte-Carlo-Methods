@@ -14,8 +14,16 @@ openmc.data.njoy.make_ace(filename, temperatures = None, acer=True, xsdir=None,\
                         smoothing=True)
 """
 """
-openmc.data.njoy.make_ace(filename, \
-                        output_dir="processed_ace_files", error=1)
+openmc.data.njoy.make_ace(filename, acer=True,
+                        output_dir="processed_ace_files/",
+                        pendf=False, 
+                        error=0.001, 
+                        broadr=False,
+                        heatr=false,
+                        gaspr=False,
+                        purr=False,
+                        evaluation=None,
+                        smoothing=True)
 """
 output_directory = "processed_ace_files"
 if not os.path.exists(output_directory):
