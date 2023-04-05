@@ -67,7 +67,7 @@ def choose_reaction():
     #First number is MT and second is filename
     name_dict = {"n,2n":("2n","n_2n"),"n,3n":("z_3n","n_3n"),"n,4n":("z_4n","n_4n") \
                     ,"fission":("fission","fission"), "elastic":("elastic","elastic") \
-                        ,"inelastic":("inelastic","inelastic"),"total":("total","total")}
+                        ,"inelastic":("inelastic","inelastic"),"total":("total","total"),"other":("other","other")}
 
     # list all the keys in name_dict
     keys = list(name_dict.keys())
@@ -77,13 +77,16 @@ def choose_reaction():
     for i, key in enumerate(keys):
         print(f"{i+1}. {key}")
     choice = input("Enter the number of the reaction: ")
-
+    if choice == 8:
+        reaction_ind = input("Enter the MT number of your desired reaction: ")
+        return(reaction_ind)
+    else:
     # get the corresponding value based on the user's choice
-    chosen_key = keys[int(choice)-1]
-    mt_number,filespec, = name_dict[chosen_key]
-    # use the filename and mt_number variables to do further processing
-    reaction_ind = mt(mt_number)
-    return(reaction_ind)
+        chosen_key = keys[int(choice)-1]
+        mt_number = name_dict[chosen_key]
+        # use the filename and mt_number variables to do further processing
+        reaction_ind = mt(mt_number)
+        return(reaction_ind)
 
 def add_reactions():
     """Gives the user the alternative to add a reaction to the calculations. 
@@ -153,10 +156,10 @@ def ace_reader(ace_file, directory):
     # Write the contents to a new file
     with open('U235.ace', 'wb') as outfile:
         outfile.write(ace_file_contents)
-    lib = pyne.ace.Library('U235central.ace')
+    lib = pyne.ace.Library('U235.ace')
     first_table_name = lib.tables[0].name
     central_table = lib.table(first_table_name)
-    os.remove('U235central.ace')
+    os.remove('U235.ace')
     
     return centralU235
 
