@@ -56,7 +56,7 @@ def choose_csv():
     sens_vector_energy, sens_vector_values = np_csvimport.csv_import(filename)
     return sens_vector_energy, sens_vector_values
 
-def choose_reaction():
+def choose_reaction(directory):
     """Prompts the user to choose a reaction by presenting a series of reactions. The user chooses reaction 
     by typing the corresponding number. It then returns the MT number that corresponds to this reaction. 
     Parameters: 
@@ -65,9 +65,9 @@ def choose_reaction():
         reaction_ind: an integer that corresponds to the MT number of the reaction type.
     """
     #First number is MT and second is filename
-    name_dict = {"n,2n":("2n","n_2n"),"n,3n":("z_3n","n_3n"),"n,4n":("z_4n","n_4n") \
-                    ,"fission":("fission","fission"), "elastic":("elastic","elastic") \
-                        ,"inelastic":("inelastic","inelastic"),"total":("total","total"),"other":("other","other")}
+    name_dict = {"n,2n":(16),"n,3n":(17),"n,4n":(37) \
+                    ,"fission":(18), "elastic":(2) \
+                        ,"inelastic":(4),"total":(1),"other":("other")}
 
     # list all the keys in name_dict
     keys = list(name_dict.keys())
@@ -78,19 +78,29 @@ def choose_reaction():
         print(f"{i+1}. {key}")
     choice = input("Enter the number of the reaction: ")
     if int(choice) == 8:
-        reaction_ind = input("Enter the MT number of your desired reaction: ")
-        return(int(reaction_ind))
+        reaction_ind = int(input("Enter the MT number of your desired reaction: "))
+        check_mt(directory, reaction_ind)
     else:
     # get the corresponding value based on the user's choice
         chosen_key = keys[int(choice)-1]
-        mt_number, filespec= name_dict[chosen_key]
-        print(mt_number)
+        reaction_ind= int(name_dict[chosen_key])
         # use the filename and mt_number variables to do further processing
-        reaction_ind = mt(mt_number)
-        print(reaction_ind)
-        return(reaction_ind)
+    return reaction_ind
 
-def add_reactions():
+def check_mt(directory, reaction_ind):
+    for entry in os.scandir(directory):
+            if entry.is_file() and ".ace" in entry.name:
+                central_file = entry.path
+                break
+    ace_check = ace_reader(central_file, directory)
+    if reaction_ind in ace_check.reactions:
+        return
+    else:
+        print("MT number not found in corresponding ace files!")
+        quit()
+    return 
+
+def add_reactions(directory):
     """Gives the user the alternative to add a reaction to the calculations. 
     Parameters: 
         none
@@ -100,7 +110,7 @@ def add_reactions():
     choice = "y"
     reaction_dict = {}
     while choice == "y":
-        reaction_ind = choose_reaction()
+        reaction_ind = choose_reaction(directory)
         sens_vector_energy, sens_vector_values = choose_csv()
         reaction_dict[reaction_ind] = [sens_vector_energy, sens_vector_values]
         choice = input("Do you want to add another reaction? [y/n]: ")
@@ -172,6 +182,7 @@ def ace_reader(ace_file, directory):
 
 def HMCcalc(reaction_dict, reaction_ind, directory, ace_file):
     results_vector = []
+
     central_xs, energy = cross_section(reaction_dict, reaction_ind, ace_file, directory)
     sens_vec_values_adjusted = sense_interp(reaction_dict, reaction_ind, energy)
     
@@ -188,7 +199,7 @@ def HMCcalc(reaction_dict, reaction_ind, directory, ace_file):
 
 def main():
     directory = ace_directory()
-    reaction_dir = add_reactions()
+    reaction_dir = add_reactions(directory)
     reactions_ind = list(reaction_dir.keys())
     central_file=central_file_decider(directory)
     
