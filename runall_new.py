@@ -77,15 +77,17 @@ def choose_reaction():
     for i, key in enumerate(keys):
         print(f"{i+1}. {key}")
     choice = input("Enter the number of the reaction: ")
-    if choice == 8:
+    if int(choice) == 8:
         reaction_ind = input("Enter the MT number of your desired reaction: ")
-        return(reaction_ind)
+        return(int(reaction_ind))
     else:
     # get the corresponding value based on the user's choice
         chosen_key = keys[int(choice)-1]
         mt_number, filespec= name_dict[chosen_key]
+        print(mt_number)
         # use the filename and mt_number variables to do further processing
         reaction_ind = mt(mt_number)
+        print(reaction_ind)
         return(reaction_ind)
 
 def add_reactions():
