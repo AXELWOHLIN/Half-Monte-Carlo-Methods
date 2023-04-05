@@ -77,9 +77,9 @@ def choose_reaction():
     for i, key in enumerate(keys):
         print(f"{i+1}. {key}")
     choice = input("Enter the number of the reaction: ")
-    if choice == 8:
+    if int(choice) == 8:
         reaction_ind = input("Enter the MT number of your desired reaction: ")
-        return(reaction_ind)
+        return(int(reaction_ind))
     else:
     # get the corresponding value based on the user's choice
         chosen_key = keys[int(choice)-1]
