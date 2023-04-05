@@ -64,7 +64,7 @@ def choose_reaction(directory):
     Returns:
         reaction_ind: an integer that corresponds to the MT number of the reaction type.
     """
-    #First number is MT and second is filename
+    #Dictionary of common reactions and the corresponding MT numbers, other can be chosen to use another reaction
     name_dict = {"n,2n":(16),"n,3n":(17),"n,4n":(37) \
                     ,"fission":(18), "elastic":(2) \
                         ,"inelastic":(4),"total":(1),"other":("other")}
@@ -79,15 +79,20 @@ def choose_reaction(directory):
     choice = input("Enter the number of the reaction: ")
     if int(choice) == 8:
         reaction_ind = int(input("Enter the MT number of your desired reaction: "))
-        check_mt(directory, reaction_ind)
+        check_mt(directory, reaction_ind) #checks if valid MT number
     else:
     # get the corresponding value based on the user's choice
         chosen_key = keys[int(choice)-1]
         reaction_ind= int(name_dict[chosen_key])
-        # use the filename and mt_number variables to do further processing
     return reaction_ind
 
 def check_mt(directory, reaction_ind):
+    """
+    Parameters: 
+        none
+    Returns:
+        reaction_ind: an integer that corresponds to the MT number of the reaction type.
+    """
     for entry in os.scandir(directory):
             if entry.is_file() and ".ace" in entry.name:
                 central_file = entry.path
