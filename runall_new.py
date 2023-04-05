@@ -14,7 +14,7 @@ from tkinter.filedialog import askopenfilename
 
 
 def ace_directory(dir=0):
-    """Prompts the user to choose a directory with ace-files by creating a Tkinter root window. 
+    """Creates a Tkinter root window and prompts the user to choose a directory with ace-files. 
     Parameters: 
         dir=0: Automatically jumps to "Choose a suitable directory with ace files"
     Returns:
@@ -102,13 +102,6 @@ def add_reactions():
     return reaction_dict
 
 def central_file_decider(directory):
-    """Decides which central file to use by asking the user if they want to choose their own central file
-    or not. If not, it takes the first ACE-file in the directory as its central file. 
-    Parameters: 
-        directory: A string with the chosen filename
-    Returns:
-        central_file: the name of the directory that will be use as the central file
-    """
     choice = input("Do you want to choose central file? [y/n]: ")
     if choice == "y":
         try:
@@ -131,9 +124,9 @@ def central_file_decider(directory):
 
 
 
-def sense_interp(reaction_dict, reaction_ind , ace_file, directory):
+def sense_interp(reaction_dict, reaction_ind , central_file, directory):
     
-    centralU235 = ace_reader(ace_file, directory)
+    centralU235 = ace_reader(central_file, directory)
     
     if reaction_ind == 1:
         xs = centralU235.sigma_t
@@ -152,12 +145,13 @@ def sense_interp(reaction_dict, reaction_ind , ace_file, directory):
 
 
 def ace_reader(ace_file, directory):
-    file_path=os.path.join(directory,ace_file)
+
+    file_path=os.path.join(directory, ace_file)
     with open(ace_file, 'rb') as infile:
         ace_file_contents = infile.read()
 
     # Write the contents to a new file
-    with open('U235central.ace', 'wb') as outfile:
+    with open('U235.ace', 'wb') as outfile:
         outfile.write(ace_file_contents)
     lib = pyne.ace.Library('U235central.ace')
     first_table_name = lib.tablelist[0]
@@ -170,10 +164,10 @@ def ace_reader(ace_file, directory):
 
 
 
-def HMCcalc(reaction_dict, reaction_ind, directory, central_file):
+def HMCcalc(reaction_dict, reaction_ind, directory, ace_file):
     results_vector = []
     
-    _, central_xs = sense_interp(reaction_dict, reaction_ind, central_file, directory)
+    _, central_xs = sense_interp(reaction_dict, reaction_ind, ace_file, directory)
     
     for file in os.listdir(directory):
         filename = os.fsdecode(file)
