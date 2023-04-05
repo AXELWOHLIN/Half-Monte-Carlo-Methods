@@ -83,7 +83,7 @@ def choose_reaction():
     else:
     # get the corresponding value based on the user's choice
         chosen_key = keys[int(choice)-1]
-        mt_number = name_dict[chosen_key]
+        mt_number, filespec= name_dict[chosen_key]
         # use the filename and mt_number variables to do further processing
         reaction_ind = mt(mt_number)
         return(reaction_ind)
