@@ -14,7 +14,7 @@ from tkinter.filedialog import askopenfilename
 
 
 def ace_directory(dir=0):
-    """Prompts the user to choose a directory with ace-files by creating a Tkinter root window. 
+    """Creates a Tkinter root window and prompts the user to choose a directory with ace-files. 
     Parameters: 
         dir=0: Automatically jumps to "Choose a suitable directory with ace files"
     Returns:
@@ -22,7 +22,7 @@ def ace_directory(dir=0):
     """
     if dir==0:
         try:
-            root = Tk.Tk()
+            root = Tk()
             root.withdraw()
             directory = filedialog.askdirectory()
             print("Selected directory: ", directory)
@@ -45,11 +45,11 @@ def csv_files():
     """
     try:
         print("\nPlease choose a sensitivity vector in .csv format:")
-        root = Tk.Tk()
+        root = Tk()
         # Hide the main window
         root.withdraw()
         # Show the file dialog and get the selected file
-        filename = askopenfilename()
+        filename = filedialog.askopenfilename()
     except:
         print("Tkinter is not available. Please enter the file path manually:")
         filename = input()
@@ -67,7 +67,7 @@ def choose_reaction():
     #First number is MT and second is filename
     name_dict = {"n,2n":("2n","n_2n"),"n,3n":("z_3n","n_3n"),"n,4n":("z_4n","n_4n") \
                     ,"fission":("fission","fission"), "elastic":("elastic","elastic") \
-                        ,"inelastic":("inelastic","inelastic"),"total":("total","total")}
+                        ,"inelastic":("inelastic","inelastic"),"total":("total","total"),"other":("other","other")}
 
     # list all the keys in name_dict
     keys = list(name_dict.keys())
@@ -77,13 +77,16 @@ def choose_reaction():
     for i, key in enumerate(keys):
         print(f"{i+1}. {key}")
     choice = input("Enter the number of the reaction: ")
-
+    if choice == 8:
+        reaction_ind = input("Enter the MT number of your desired reaction: ")
+        return(reaction_ind)
+    else:
     # get the corresponding value based on the user's choice
-    chosen_key = keys[int(choice)-1]
-    mt_number,filespec, = name_dict[chosen_key]
-    # use the filename and mt_number variables to do further processing
-    reaction_ind = mt(mt_number)
-    return(reaction_ind)
+        chosen_key = keys[int(choice)-1]
+        mt_number = name_dict[chosen_key]
+        # use the filename and mt_number variables to do further processing
+        reaction_ind = mt(mt_number)
+        return(reaction_ind)
 
 def add_reactions():
     """Gives the user the alternative to add a reaction to the calculations. 
@@ -102,22 +105,15 @@ def add_reactions():
     return reaction_dict
 
 def central_file_decider(directory):
-    """Decides which central file to use by asking the user if they want to choose their own central file
-    or not. If not, it takes the first ACE-file in the directory as its central file. 
-    Parameters: 
-        directory: A string with the chosen filename
-    Returns:
-        central_file: the name of the directory that will be use as the central file
-    """
     choice = input("Do you want to choose central file? [y/n]: ")
     if choice == "y":
         try:
             # Create a Tkinter root window to prompt user to choose central file
-            root = Tk.Tk()
+            root = Tk()
             # Hide the main window
             root.withdraw()
             # Show the file dialog and get the selected file
-            central_file = askopenfilename()
+            central_file = filedialog.askopenfilename()
         except:
             print("Tkinter is not available. Please enter the file path manually:")
             central_file = input()
@@ -126,16 +122,14 @@ def central_file_decider(directory):
             if entry.is_file() and ".ace" in entry.name:
                 central_file = entry.path
                 break
-    print(central_file)
-    print(type(central_file))
     return central_file
 
 
 
 
-def sense_interp(reaction_dict, reaction_ind , ace_file, directory):
+def sense_interp(reaction_dict, reaction_ind , central_file, directory):
     
-    centralU235 = ace_reader(ace_file, directory)
+    centralU235 = ace_reader(central_file, directory)
     
     if reaction_ind == 1:
         xs = centralU235.sigma_t
@@ -154,30 +148,35 @@ def sense_interp(reaction_dict, reaction_ind , ace_file, directory):
 
 
 def ace_reader(ace_file, directory):
-    file_path=os.path.join(directory,ace_file)
     with open(ace_file, 'rb') as infile:
         ace_file_contents = infile.read()
 
     # Write the contents to a new file
-    with open('U235central.ace', 'wb') as outfile:
+    with open('U235.ace', 'wb') as outfile:
         outfile.write(ace_file_contents)
-    lib = pyne.ace.Library('U235central.ace')
-    lib.read('92235.00c')
+    lib = pyne.ace.Library('U235.ace')
+    for entry in os.scandir(directory):
+            if entry.is_file() and ".xsdir" in entry.name:
+                dir_file = entry.path
+                break
+    with open(dir_file) as f:
+        first_line = f.readline()
+        first_word = first_line.split()[0]
+    lib.read(first_word)
     lib.tables
-    centralU235 = lib.tables['92235.00c']
-    
-    os.remove('U235central.ace')
+    centralU235 = lib.tables[first_word]
+    os.remove('U235.ace')
     
     return centralU235
 
 
 
-def HMCcalc(reaction_dict, reaction_ind, directory, central_file):
+def HMCcalc(reaction_dict, reaction_ind, directory, ace_file):
     results_vector = []
     
-    _, central_xs = sense_interp(reaction_dict, reaction_ind, central_file, directory)
+    _, central_xs = sense_interp(reaction_dict, reaction_ind, ace_file, directory)
     
-    for file in os.listdir(directory):
+    for file in os.scandir(directory):
         filename = os.fsdecode(file)
         if ".ace" in filename:
             sens_vec_values_adjusted, xs = sense_interp(reaction_dict, reaction_ind, filename, directory)
