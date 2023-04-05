@@ -34,7 +34,7 @@ def ace_directory(dir=0):
         directory = dir
     return directory
 
-def csv_files():
+def choose_csv():
     """Prompts the user to choose a sensitivity vector by creating a Tkinter root window.
     The sensitivity vectors is then saved in one vector with energies and one with the corresponding values.  
     Parameters: 
@@ -99,7 +99,7 @@ def add_reactions():
     reaction_dict = {}
     while choice == "y":
         reaction_ind = choose_reaction()
-        sens_vector_energy, sens_vector_values = csv_files()
+        sens_vector_energy, sens_vector_values = choose_csv()
         reaction_dict[reaction_ind] = [sens_vector_energy, sens_vector_values]
         choice = input("Do you want to add another reaction? [y/n]: ")
     return reaction_dict
@@ -125,26 +125,22 @@ def central_file_decider(directory):
     return central_file
 
 
-
-
-def sense_interp(reaction_dict, reaction_ind , central_file, directory):
-    
-    centralU235 = ace_reader(central_file, directory)
-    
+def cross_section(reaction_dict, reaction_ind, ace_file, directory):
+    U235 = ace_reader(ace_file, directory)
     if reaction_ind == 1:
-        xs = centralU235.sigma_t
-        energy = centralU235.energy
+        xs = U235.sigma_t
+        energy = U235.energy
     else:
-        xs = centralU235.reactions[reaction_ind].sigma
-        spec_reaction = centralU235.reactions[reaction_ind]
-        energy = centralU235.energy[spec_reaction.IE:]
-        
+        xs = U235.reactions[reaction_ind].sigma
+        spec_reaction = U235.reactions[reaction_ind]
+        energy = U235.energy[spec_reaction.IE:]
+    return xs, energy
+
+def sense_interp(reaction_dict, reaction_ind, energy):
     sens_vector_energy, sens_vector_values = reaction_dict[reaction_ind]
     energy *= 1e+06
     sens_vec_values_adjusted = np.interp(energy,sens_vector_energy,sens_vector_values)
-    return  sens_vec_values_adjusted, xs
-
-
+    return  sens_vec_values_adjusted
 
 
 def ace_reader(ace_file, directory):
@@ -165,6 +161,7 @@ def ace_reader(ace_file, directory):
     lib.read(first_word)
     lib.tables
     centralU235 = lib.tables[first_word]
+
     os.remove('U235.ace')
     
     return centralU235
@@ -173,23 +170,19 @@ def ace_reader(ace_file, directory):
 
 def HMCcalc(reaction_dict, reaction_ind, directory, ace_file):
     results_vector = []
-    
-    _, central_xs = sense_interp(reaction_dict, reaction_ind, ace_file, directory)
+    central_xs, energy = cross_section(reaction_dict, reaction_ind, ace_file, directory)
+    sens_vec_values_adjusted = sense_interp(reaction_dict, reaction_ind, energy)
     
     for file in os.scandir(directory):
         filename = os.fsdecode(file)
         if ".ace" in filename:
-            sens_vec_values_adjusted, xs = sense_interp(reaction_dict, reaction_ind, filename, directory)
+            xs, _ = cross_section(reaction_dict, reaction_ind, filename, directory)
             tmp = np.dot(sens_vec_values_adjusted,(xs.transpose()-central_xs.transpose()))
             results_vector.append(tmp)
             #print(f"Our scalar is {tmp}")
         else:
             continue
-    
-    
-    
     return results_vector
-
 
 def main():
     directory = ace_directory()
