@@ -18,7 +18,7 @@ def ace_directory(dir=0):
     Parameters: 
         dir=0: Automatically jumps to "Choose a suitable directory with ace files"
     Returns:
-        directory: A string with the chosen filename. 
+        directory: A string with the chosen directory. 
     """
     if dir==0:
         try:
@@ -117,6 +117,12 @@ def add_reactions(directory):
     return reaction_dict
 
 def central_file_decider(directory):
+    """Decides which file to use as central file. 
+    Parameters: 
+        directory: A string with the name of the chosen directory.
+    Returns:
+        central file: A string with the name of the chosen central file.
+    """
     choice = input("Do you want to choose central file? [y/n]: ")
     if choice == "y":
         try:
@@ -138,6 +144,16 @@ def central_file_decider(directory):
 
 
 def cross_section(reaction_dict, reaction_ind, ace_file, directory):
+    """Picks out the cross sections from the ACE-files. 
+    Parameters: 
+        reaction_dict: A dictionairy with the MT numbers as keys and the sensitivity vectors as values. 
+        reaction_ind: An integer that corresponds to the MT number of the reaction type.
+        ace_file: A string with the name of the specific ACE-file.
+        directory: A string with the name of the chosen directory.
+    Returns:
+        xs: A vector with all the cross-sections from the chosen reaction.
+        energy: A vector with all the energies from the chosen reaction.
+    """
     U235 = ace_reader(ace_file, directory)
     if reaction_ind == 1:
         xs = U235.sigma_t
@@ -149,6 +165,14 @@ def cross_section(reaction_dict, reaction_ind, ace_file, directory):
     return xs, energy
 
 def sense_interp(reaction_dict, reaction_ind, energy):
+    """Since the vectors are of different size we interpolate them. 
+    Parameters: 
+        reaction_dict: A dictionairy with the MT numbers as keys and the sensitivity vectors as values. 
+        reaction_ind: An integer that corresponds to the MT number of the reaction type.
+        energy: A vector with all the energies from the chosen reaction
+    Returns:
+        sens_vec_values_adjusted: A vector of the same length as the sensitivity vector. 
+    """
     sens_vector_energy, sens_vector_values = reaction_dict[reaction_ind]
     energy *= 1e+06
     sens_vec_values_adjusted = np.interp(energy,sens_vector_energy,sens_vector_values)
@@ -156,6 +180,13 @@ def sense_interp(reaction_dict, reaction_ind, energy):
 
 
 def ace_reader(ace_file, directory):
+    """Fortsätt dokumentera här. 
+    Parameters: 
+        ace_file: A string with the name of the specific ACE-file.
+        directory: A string with the name of the chosen directory.
+    Returns:
+        centralU235: 
+    """
     with open(ace_file, 'rb') as infile:
         ace_file_contents = infile.read()
 
@@ -175,7 +206,6 @@ def ace_reader(ace_file, directory):
     centralU235 = lib.tables[first_word]
 
     os.remove('U235.ace')
-    
     return centralU235
 
 
