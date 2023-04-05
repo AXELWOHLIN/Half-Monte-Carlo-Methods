@@ -22,7 +22,7 @@ def ace_directory(dir=0):
     """
     if dir==0:
         try:
-            root = Tk.Tk()
+            root = Tk()
             root.withdraw()
             directory = filedialog.askdirectory()
             print("Selected directory: ", directory)
@@ -45,11 +45,11 @@ def csv_files():
     """
     try:
         print("\nPlease choose a sensitivity vector in .csv format:")
-        root = Tk.Tk()
+        root = Tk()
         # Hide the main window
         root.withdraw()
         # Show the file dialog and get the selected file
-        filename = askopenfilename()
+        filename = filedialog.askopenfilename()
     except:
         print("Tkinter is not available. Please enter the file path manually:")
         filename = input()
@@ -113,11 +113,11 @@ def central_file_decider(directory):
     if choice == "y":
         try:
             # Create a Tkinter root window to prompt user to choose central file
-            root = Tk.Tk()
+            root = Tk()
             # Hide the main window
             root.withdraw()
             # Show the file dialog and get the selected file
-            central_file = askopenfilename()
+            central_file = filedialog.askopenfilename()
         except:
             print("Tkinter is not available. Please enter the file path manually:")
             central_file = input()
@@ -126,8 +126,6 @@ def central_file_decider(directory):
             if entry.is_file() and ".ace" in entry.name:
                 central_file = entry.path
                 break
-    print(central_file)
-    print(type(central_file))
     return central_file
 
 
@@ -162,10 +160,10 @@ def ace_reader(ace_file, directory):
     with open('U235central.ace', 'wb') as outfile:
         outfile.write(ace_file_contents)
     lib = pyne.ace.Library('U235central.ace')
-    lib.read('92235.00c')
-    lib.tables
-    centralU235 = lib.tables['92235.00c']
-    
+    first_table_name = lib.tablelist[0]
+    lib.read(first_table_name)
+    central_table = lib.tables[first_table_name]
+
     os.remove('U235central.ace')
     
     return centralU235
