@@ -145,18 +145,24 @@ def sense_interp(reaction_dict, reaction_ind , central_file, directory):
 
 
 def ace_reader(ace_file, directory):
-
-    file_path=os.path.join(directory, ace_file)
     with open(ace_file, 'rb') as infile:
         ace_file_contents = infile.read()
 
     # Write the contents to a new file
     with open('U235.ace', 'wb') as outfile:
         outfile.write(ace_file_contents)
-    lib = pyne.ace.Library('U235central.ace')
-    first_table_name = lib.tables[0].name
-    central_table = lib.table(first_table_name)
-    os.remove('U235central.ace')
+    lib = pyne.ace.Library('U235.ace')
+    for entry in os.scandir(directory):
+            if entry.is_file() and ".xsdir" in entry.name:
+                dir_file = entry.path
+                break
+    with open(dir_file) as f:
+        first_line = f.readline()
+        first_word = first_line.split()[0]
+    lib.read(first_word)
+    lib.tables
+    centralU235 = lib.tables[first_word]
+    os.remove('U235.ace')
     
     return centralU235
 
@@ -167,7 +173,7 @@ def HMCcalc(reaction_dict, reaction_ind, directory, ace_file):
     
     _, central_xs = sense_interp(reaction_dict, reaction_ind, ace_file, directory)
     
-    for file in os.listdir(directory):
+    for file in os.scandir(directory):
         filename = os.fsdecode(file)
         if ".ace" in filename:
             sens_vec_values_adjusted, xs = sense_interp(reaction_dict, reaction_ind, filename, directory)
