@@ -154,10 +154,8 @@ def ace_reader(ace_file, directory):
     with open('U235.ace', 'wb') as outfile:
         outfile.write(ace_file_contents)
     lib = pyne.ace.Library('U235central.ace')
-    first_table_name = lib.tablelist[0]
-    lib.read(first_table_name)
-    central_table = lib.tables[first_table_name]
-
+    first_table_name = lib.tables[0].name
+    central_table = lib.table(first_table_name)
     os.remove('U235central.ace')
     
     return centralU235
