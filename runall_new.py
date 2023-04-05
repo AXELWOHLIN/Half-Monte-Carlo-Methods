@@ -18,7 +18,7 @@ def ace_directory(dir=0):
     Parameters: 
         dir=0: Automatically jumps to "Choose a suitable directory with ace files"
     Returns:
-        directory: A string with the chosen filename. 
+        directory: A string with the chosen directory. 
     """
     if dir==0:
         try:
@@ -34,7 +34,7 @@ def ace_directory(dir=0):
         directory = dir
     return directory
 
-def csv_files():
+def choose_csv():
     """Prompts the user to choose a sensitivity vector by creating a Tkinter root window.
     The sensitivity vectors is then saved in one vector with energies and one with the corresponding values.  
     Parameters: 
@@ -56,7 +56,7 @@ def csv_files():
     sens_vector_energy, sens_vector_values = np_csvimport.csv_import(filename)
     return sens_vector_energy, sens_vector_values
 
-def choose_reaction():
+def choose_reaction(directory):
     """Prompts the user to choose a reaction by presenting a series of reactions. The user chooses reaction 
     by typing the corresponding number. It then returns the MT number that corresponds to this reaction. 
     Parameters: 
@@ -64,10 +64,10 @@ def choose_reaction():
     Returns:
         reaction_ind: an integer that corresponds to the MT number of the reaction type.
     """
-    #First number is MT and second is filename
-    name_dict = {"n,2n":("2n","n_2n"),"n,3n":("z_3n","n_3n"),"n,4n":("z_4n","n_4n") \
-                    ,"fission":("fission","fission"), "elastic":("elastic","elastic") \
-                        ,"inelastic":("inelastic","inelastic"),"total":("total","total"),"other":("other","other")}
+    #Dictionary of common reactions and the corresponding MT numbers, other can be chosen to use another reaction
+    name_dict = {"n,2n":(16),"n,3n":(17),"n,4n":(37) \
+                    ,"fission":(18), "elastic":(2) \
+                        ,"inelastic":(4),"total":(1),"other":("other")}
 
     # list all the keys in name_dict
     keys = list(name_dict.keys())
@@ -77,18 +77,35 @@ def choose_reaction():
     for i, key in enumerate(keys):
         print(f"{i+1}. {key}")
     choice = input("Enter the number of the reaction: ")
-    if choice == 8:
-        reaction_ind = input("Enter the MT number of your desired reaction: ")
-        return(reaction_ind)
+    if int(choice) == 8:
+        reaction_ind = int(input("Enter the MT number of your desired reaction: "))
+        check_mt(directory, reaction_ind) #checks if valid MT number
     else:
     # get the corresponding value based on the user's choice
         chosen_key = keys[int(choice)-1]
-        mt_number = name_dict[chosen_key]
-        # use the filename and mt_number variables to do further processing
-        reaction_ind = mt(mt_number)
-        return(reaction_ind)
+        reaction_ind= int(name_dict[chosen_key])
+    return reaction_ind
 
-def add_reactions():
+def check_mt(directory, reaction_ind):
+    """
+    Parameters: 
+        none
+    Returns:
+        reaction_ind: an integer that corresponds to the MT number of the reaction type.
+    """
+    for entry in os.scandir(directory):
+            if entry.is_file() and ".ace" in entry.name:
+                central_file = entry.path
+                break
+    ace_check = ace_reader(central_file, directory)
+    if reaction_ind in ace_check.reactions:
+        return
+    else:
+        print("MT number not found in corresponding ace files!")
+        quit()
+    return 
+
+def add_reactions(directory):
     """Gives the user the alternative to add a reaction to the calculations. 
     Parameters: 
         none
@@ -98,13 +115,19 @@ def add_reactions():
     choice = "y"
     reaction_dict = {}
     while choice == "y":
-        reaction_ind = choose_reaction()
-        sens_vector_energy, sens_vector_values = csv_files()
+        reaction_ind = choose_reaction(directory)
+        sens_vector_energy, sens_vector_values = choose_csv()
         reaction_dict[reaction_ind] = [sens_vector_energy, sens_vector_values]
         choice = input("Do you want to add another reaction? [y/n]: ")
     return reaction_dict
 
 def central_file_decider(directory):
+    """Decides which file to use as central file. 
+    Parameters: 
+        directory: A string with the name of the chosen directory.
+    Returns:
+        central file: A string with the name of the chosen central file.
+    """
     choice = input("Do you want to choose central file? [y/n]: ")
     if choice == "y":
         try:
@@ -125,29 +148,50 @@ def central_file_decider(directory):
     return central_file
 
 
-
-
-def sense_interp(reaction_dict, reaction_ind , central_file, directory):
-    
-    centralU235 = ace_reader(central_file, directory)
-    
+def cross_section(reaction_dict, reaction_ind, ace_file, directory):
+    """Picks out the cross sections from the ACE-files. 
+    Parameters: 
+        reaction_dict: A dictionairy with the MT numbers as keys and the sensitivity vectors as values. 
+        reaction_ind: An integer that corresponds to the MT number of the reaction type.
+        ace_file: A string with the name of the specific ACE-file.
+        directory: A string with the name of the chosen directory.
+    Returns:
+        xs: A vector with all the cross-sections from the chosen reaction.
+        energy: A vector with all the energies from the chosen reaction.
+    """
+    U235 = ace_reader(ace_file, directory)
     if reaction_ind == 1:
-        xs = centralU235.sigma_t
-        energy = centralU235.energy
+        xs = U235.sigma_t
+        energy = U235.energy
     else:
-        xs = centralU235.reactions[reaction_ind].sigma
-        spec_reaction = centralU235.reactions[reaction_ind]
-        energy = centralU235.energy[spec_reaction.IE:]
-        
+        xs = U235.reactions[reaction_ind].sigma
+        spec_reaction = U235.reactions[reaction_ind]
+        energy = U235.energy[spec_reaction.IE:]
+    return xs, energy
+
+def sense_interp(reaction_dict, reaction_ind, energy):
+    """Since the vectors are of different size we interpolate them. 
+    Parameters: 
+        reaction_dict: A dictionairy with the MT numbers as keys and the sensitivity vectors as values. 
+        reaction_ind: An integer that corresponds to the MT number of the reaction type.
+        energy: A vector with all the energies from the chosen reaction
+    Returns:
+        sens_vec_values_adjusted: A vector of the same length as the sensitivity vector. 
+    """
     sens_vector_energy, sens_vector_values = reaction_dict[reaction_ind]
     energy *= 1e+06
     sens_vec_values_adjusted = np.interp(energy,sens_vector_energy,sens_vector_values)
-    return  sens_vec_values_adjusted, xs
-
-
+    return  sens_vec_values_adjusted
 
 
 def ace_reader(ace_file, directory):
+    """Fortsätt dokumentera här. 
+    Parameters: 
+        ace_file: A string with the name of the specific ACE-file.
+        directory: A string with the name of the chosen directory.
+    Returns:
+        centralU235: 
+    """
     with open(ace_file, 'rb') as infile:
         ace_file_contents = infile.read()
 
@@ -165,35 +209,32 @@ def ace_reader(ace_file, directory):
     lib.read(first_word)
     lib.tables
     centralU235 = lib.tables[first_word]
+
     os.remove('U235.ace')
-    
     return centralU235
 
 
 
 def HMCcalc(reaction_dict, reaction_ind, directory, ace_file):
     results_vector = []
-    
-    _, central_xs = sense_interp(reaction_dict, reaction_ind, ace_file, directory)
+
+    central_xs, energy = cross_section(reaction_dict, reaction_ind, ace_file, directory)
+    sens_vec_values_adjusted = sense_interp(reaction_dict, reaction_ind, energy)
     
     for file in os.scandir(directory):
         filename = os.fsdecode(file)
         if ".ace" in filename:
-            sens_vec_values_adjusted, xs = sense_interp(reaction_dict, reaction_ind, filename, directory)
+            xs, _ = cross_section(reaction_dict, reaction_ind, filename, directory)
             tmp = np.dot(sens_vec_values_adjusted,(xs.transpose()-central_xs.transpose()))
             results_vector.append(tmp)
             #print(f"Our scalar is {tmp}")
         else:
             continue
-    
-    
-    
     return results_vector
-
 
 def main():
     directory = ace_directory()
-    reaction_dir = add_reactions()
+    reaction_dir = add_reactions(directory)
     reactions_ind = list(reaction_dir.keys())
     central_file=central_file_decider(directory)
     
