@@ -142,7 +142,7 @@ def central_file_decider(directory):
             central_file = input()
     elif choice == "n":
         for entry in os.scandir(directory):
-            if entry.is_file() and ".ace" or "Ace" in entry.name:
+            if entry.is_file() and ".ace" in entry.name:
                 central_file = entry.path
                 break
     return central_file
