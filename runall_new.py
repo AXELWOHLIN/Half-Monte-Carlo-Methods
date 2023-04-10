@@ -142,7 +142,7 @@ def central_file_decider(directory):
             central_file = input()
     elif choice == "n":
         for entry in os.scandir(directory):
-            if entry.is_file() and ".ace" in entry.name:
+            if entry.is_file() and ".ace" or "Ace" in entry.name:
                 central_file = entry.path
                 break
     return central_file
@@ -159,14 +159,14 @@ def cross_section(reaction_dict, reaction_ind, ace_file, directory):
         xs: A vector with all the cross-sections from the chosen reaction.
         energy: A vector with all the energies from the chosen reaction.
     """
-    U235 = ace_reader(ace_file, directory)
+    data = ace_reader(ace_file, directory)
     if reaction_ind == 1:
-        xs = U235.sigma_t
-        energy = U235.energy
+        xs = data.sigma_t
+        energy = data.energy
     else:
-        xs = U235.reactions[reaction_ind].sigma
-        spec_reaction = U235.reactions[reaction_ind]
-        energy = U235.energy[spec_reaction.IE:]
+        xs = data.reactions[reaction_ind].sigma
+        spec_reaction = data.reactions[reaction_ind]
+        energy = data.energy[spec_reaction.IE:]
     return xs, energy
 
 def sense_interp(reaction_dict, reaction_ind, energy):
@@ -190,15 +190,15 @@ def ace_reader(ace_file, directory):
         ace_file: A string with the name of the specific ACE-file.
         directory: A string with the name of the chosen directory.
     Returns:
-        centralU235: 
+        file_contents: 
     """
     with open(ace_file, 'rb') as infile:
         ace_file_contents = infile.read()
 
     # Write the contents to a new file
-    with open('U235.ace', 'wb') as outfile:
+    with open('new_file.ace', 'wb') as outfile:
         outfile.write(ace_file_contents)
-    lib = pyne.ace.Library('U235.ace')
+    lib = pyne.ace.Library('new_file.ace')
     for entry in os.scandir(directory):
             if entry.is_file() and ".xsdir" in entry.name:
                 dir_file = entry.path
@@ -208,10 +208,9 @@ def ace_reader(ace_file, directory):
         first_word = first_line.split()[0]
     lib.read(first_word)
     lib.tables
-    centralU235 = lib.tables[first_word]
+    file_contents = lib.tables[first_word]
 
-    os.remove('U235.ace')
-    return centralU235
+    return file_contents
 
 
 
@@ -225,9 +224,9 @@ def HMCcalc(reaction_dict, reaction_ind, directory, ace_file):
         filename = os.fsdecode(file)
         if ".ace" in filename:
             xs, _ = cross_section(reaction_dict, reaction_ind, filename, directory)
-            tmp = np.dot(sens_vec_values_adjusted,(xs.transpose()-central_xs.transpose()))
-            results_vector.append(tmp)
-            #print(f"Our scalar is {tmp}")
+            delta_k_eff = np.dot(sens_vec_values_adjusted,(xs.transpose()-central_xs.transpose()))
+            results_vector.append(delta_k_eff)
+            #print(f"Our scalar is {delta_k_eff}")
         else:
             continue
     return results_vector
@@ -256,7 +255,8 @@ def main():
 
         plt.savefig(f'result_plots/figure_{reaction_ind}.png')
         plt.clf()
-        
+        print(mean)
+        print(std_dev)
     return mean, std_dev
 
 if __name__ == '__main__':
