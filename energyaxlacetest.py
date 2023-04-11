@@ -54,7 +54,9 @@ filename = f'csv_files/Godiva_{filespec}.csv'
 sens_vector_energy, sens_vector_values = np_csvimport.csv_import(filename)
 energy *= 1e+06
 sens_vec_values_adjusted = np.interp(energy,sens_vector_energy,sens_vector_values)
-
+print(centralU235.energy)
+print(np.shape(centralU235.energy))
+print(centralU235.energy[:-10])
 
 results_vector = np.zeros(shape = (98,1))
 file_indxs = ["01","02","03","04","05","06","07","08","09"] + list(range(10,100))
@@ -86,15 +88,9 @@ for i in range(9):
         energy = u235.energy[spec_reaction.IE:]
     energy *= 1e+06
     sens_vec_values_adjusted = np.interp(energy,sens_vector_energy,sens_vector_values)
-
-
-    tmp = np.dot(sens_vec_values_adjusted,(xs.transpose()-central_xs.transpose()))
-    if int(i)>=44:
-        results_vector[int(i)-2,0] = tmp
-    else:
-        results_vector[int(i)-1,0] = tmp
-    print(f"Our scalar is {tmp}")
-
+    print(u235.energy)
+    print(np.shape(u235.energy))
+    print(u235.energy[-10:])
 mean = np.mean(results_vector)
 std_dev = np.std(results_vector)
 
