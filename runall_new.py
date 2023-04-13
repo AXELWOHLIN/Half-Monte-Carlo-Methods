@@ -141,9 +141,11 @@ def central_file_decider(directory):
             print("Tkinter is not available. Please enter the file path manually:")
             central_file = input()
     elif choice == "n":
-        for entry in os.scandir(directory):
+        sorted_entries = sorted(os.scandir(directory), key=lambda entry: entry.name)
+        for entry in sorted_entries:
             if entry.is_file() and ".ace" in entry.name:
                 central_file = entry.path
+                print(central_file)
                 break
     return central_file
 
