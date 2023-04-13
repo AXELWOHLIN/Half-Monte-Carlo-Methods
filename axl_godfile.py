@@ -30,7 +30,7 @@ mt_number,filespec = name_dict[chosen_key]
 reaction_ind = mt(mt_number)
 
 #central_file_name = os.path.join('U235.nuss.10.10.2016', f'U235-n.ace_0000')
-central_file_name = os.path.join('ENDF_to_ACE/processed_ace_files/', f'0_AceFile')
+central_file_name = os.path.join('ENDF_to_ACE/processed_ace_files/', f'0_AceFile.ace')
 with open(central_file_name, 'rb') as infile:
     central_file_contents = infile.read()
 
@@ -64,7 +64,7 @@ for i in range(9):
         continue
     # Navigate to the file within the directory
     #file_path = os.path.join('U235.nuss.10.10.2016', f'U235-n.ace_00{i}')
-    file_path = os.path.join('ENDF_to_ACE/processed_ace_files/', f'{i}_AceFile')
+    file_path = os.path.join('ENDF_to_ACE/processed_ace_files/', f'{i}_AceFile.ace')
     # Open the file and read its contents
     with open(file_path, 'rb') as infile:
         file_contents = infile.read()
