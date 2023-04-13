@@ -2,7 +2,6 @@ import os
 import matplotlib.pyplot as plt
 import pyne.ace
 import requests
-import np_csvimport
 from scipy.interpolate import interp2d
 from scipy.interpolate import interp1d
 import numpy as np
