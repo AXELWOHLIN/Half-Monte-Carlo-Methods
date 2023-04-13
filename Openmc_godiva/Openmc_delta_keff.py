@@ -16,3 +16,4 @@ for element in keff:
     delta_keff.append(element-keff[0])
 delta_keff=delta_keff[1:]
 print(np.mean(delta_keff))
+print(np.std(delta_keff))
