@@ -145,7 +145,6 @@ def central_file_decider(directory):
         for entry in sorted_entries:
             if entry.is_file() and ".ace" in entry.name:
                 central_file = entry.path
-                print(central_file)
                 break
     return central_file
 
