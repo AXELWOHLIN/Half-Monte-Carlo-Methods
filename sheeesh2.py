@@ -47,7 +47,6 @@ def choose_csv():
         root.withdraw()
         # ask the user to select a file using the filedialog
         file_path = filedialog.askopenfilename()
-        print(file_path)
     except:
         print("Tkinter is not available. Please enter the file path manually:")
         file_path = input()
