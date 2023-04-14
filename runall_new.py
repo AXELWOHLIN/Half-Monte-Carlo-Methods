@@ -1,7 +1,6 @@
 import os
 import matplotlib.pyplot as plt
 import pyne.ace
-import requests
 import numpy as np
 from pyne.rxname import *
 from tkinter import Tk
@@ -247,8 +246,8 @@ def main():
         plt.title(f'delta k_eff {reaction_ind}_xs')
         plt.xlabel('Values')
         plt.ylabel('Number of Cases')
-        plt.figtext(.8, .8, f"mean = {round(mean,4)}")
-        plt.figtext(.8, .5, f"std dev = {round(std_dev,4)}")
+        plt.figtext(.65, .8, f"mean = {round(mean,4)}")
+        plt.figtext(.65, .7, f"std dev = {round(std_dev,4)}")
 
         plt.savefig(f'result_plots/figure_{reaction_ind}.png')
         plt.clf()
