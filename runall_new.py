@@ -1,7 +1,6 @@
 import os
 import matplotlib.pyplot as plt
 import pyne.ace
-import requests
 import numpy as np
 from pyne.rxname import *
 from tkinter import Tk
