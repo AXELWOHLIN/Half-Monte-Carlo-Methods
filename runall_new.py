@@ -2,9 +2,6 @@ import os
 import matplotlib.pyplot as plt
 import pyne.ace
 import requests
-import np_csvimport
-from scipy.interpolate import interp2d
-from scipy.interpolate import interp1d
 import numpy as np
 from pyne.rxname import *
 from tkinter import Tk
@@ -51,19 +48,10 @@ def choose_csv():
         # ask the user to select a file using the filedialog
         file_path = filedialog.askopenfilename()
         print(file_path)
-            # if the user has selected a file
-        if file_path:
-            # get the folder that the file is in
-            folder_path = "/".join(file_path.split("/")[:-1])
-            # get the filename
-            filename = file_path.split("/")[-1]
-            # create the file directory string
-            file_directory = f"{folder_path}/{filename}"
-            print(file_directory)
     except:
         print("Tkinter is not available. Please enter the file path manually:")
-        file_directory = input()
-    data = np.array(np.loadtxt(file_directory, delimiter=','))
+        file_path = input()
+    data = np.array(np.loadtxt(file_path, delimiter=','))
     sens_vector_energy = data[:, 0]
     sens_vector_values = data[:, 1]
     return sens_vector_energy, sens_vector_values
@@ -96,7 +84,7 @@ def choose_reaction(directory):
     # get the corresponding value based on the user's choice
         chosen_key = keys[int(choice)-1]
         reaction_ind= int(name_dict[chosen_key])
-    return reaction_ind
+        return reaction_ind
 
 def check_mt(directory, reaction_ind):
     """
