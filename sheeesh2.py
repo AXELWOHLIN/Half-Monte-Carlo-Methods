@@ -8,6 +8,8 @@ from tkinter import Tk
 from tkinter import *
 from tkinter import filedialog
 from tkinter.filedialog import askopenfilename
+from scipy.stats import skew
+from scipy.stats import norm, kurtosis
 
 
 def ace_directory(dir=0):
@@ -263,23 +265,28 @@ def main():
         results_vector = HMCcalc(reaction_dir, reaction_ind, directory, central_file, interp_type)
         mean = np.mean(results_vector)
         std_dev = np.std(results_vector)
-
+        kurt = kurtosis(results_vector)
+        skewness = skew(results_vector)
         plt.hist(results_vector, bins=25, density=False)
 
         # Set the plot title and axis labels
         plt.title(f'delta k_eff {reaction_ind}_xs')
-        plt.xlabel('Values')
+        plt.xlabel('delta k_eff')
         plt.ylabel('Number of Cases')
-        plt.figtext(.8, .8, f"mean = {round(mean,4)}")
-        plt.figtext(.8, .5, f"std dev = {round(std_dev,4)}")
+        plt.figtext(.65, .85, f"mean = {round(mean,4)}")
+        plt.figtext(.65, .8, f"std dev = {round(std_dev,4)}")
+        plt.figtext(.65, .75, f"kurtosis = {round(kurt,4)}")
+        plt.figtext(.65, .7, f"skewness = {round(skewness,4)}")
 
         if interp_type == "1":
             plt.savefig(f'result_plots_linear_interp/figure_{reaction_ind}.png')
         elif interp_type == "2":
             plt.savefig(f'result_plots_static_interp/figure_{reaction_ind}.png')
         plt.clf()
-        print(mean)
-        print(std_dev)
+        print(f"mean: {mean}")
+        print(f"std dev: {std_dev}")
+        print(f"skewness: {skewness}")
+        print(f"kurtosis: {kurt}")
     return mean, std_dev
 
 if __name__ == '__main__':
