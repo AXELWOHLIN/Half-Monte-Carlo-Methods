@@ -1,15 +1,12 @@
 import os
 import matplotlib.pyplot as plt
 import pyne.ace
-import requests
 import numpy as np
 from pyne.rxname import *
 from tkinter import Tk
 from tkinter import *
 from tkinter import filedialog
 from tkinter.filedialog import askopenfilename
-from scipy.stats import skew
-from scipy.stats import norm, kurtosis
 
 
 def ace_directory(dir=0):
@@ -49,6 +46,7 @@ def choose_csv():
         root.withdraw()
         # ask the user to select a file using the filedialog
         file_path = filedialog.askopenfilename()
+        print(file_path)
     except:
         print("Tkinter is not available. Please enter the file path manually:")
         file_path = input()
@@ -170,7 +168,7 @@ def cross_section(reaction_dict, reaction_ind, ace_file, directory):
         energy = data.energy[spec_reaction.IE:]
     return xs, energy
 
-def sense_interp(reaction_dict, reaction_ind, energy,type):
+def sense_interp(reaction_dict, reaction_ind, energy):
     """Since the vectors are of different size we interpolate them. 
     Parameters: 
         reaction_dict: A dictionairy with the MT numbers as keys and the sensitivity vectors as values. 
@@ -179,27 +177,10 @@ def sense_interp(reaction_dict, reaction_ind, energy,type):
     Returns:
         sens_vec_values_adjusted: A vector of the same length as the sensitivity vector. 
     """
-    if type == "1":
-        sens_vector_energy, sens_vector_values = reaction_dict[reaction_ind]
-        energy *= 1e+06
-        sens_vec_values_adjusted = np.interp(energy,sens_vector_energy,sens_vector_values)
-        return  sens_vec_values_adjusted
-    elif type == "2":
-        sens_vector_energy, sens_vector_values = reaction_dict[reaction_ind]
-        energy *= 1e+06
-        # Static hold interpolation
-        sens_vec_values_adjusted = np.zeros(len(energy))
-        for i, e in enumerate(energy):
-            idx = np.searchsorted(sens_vector_energy, e) - 1
-            if idx < 0:
-                idx = 0
-            elif idx >= len(sens_vector_values):
-                idx = len(sens_vector_values) - 1
-            sens_vec_values_adjusted[i] = sens_vector_values[idx]
-        return sens_vec_values_adjusted
-    else: 
-        print("Syntax error, try entering 1 or 2 to choose interp_type!")
-        quit()
+    sens_vector_energy, sens_vector_values = reaction_dict[reaction_ind]
+    energy *= 1e+06
+    sens_vec_values_adjusted = np.interp(energy,sens_vector_energy,sens_vector_values)
+    return  sens_vec_values_adjusted
 
 def ace_reader(ace_file, directory):
     """Fortsätt dokumentera här. 
@@ -229,11 +210,11 @@ def ace_reader(ace_file, directory):
 
     return file_contents
 
-def HMCcalc(reaction_dict, reaction_ind, directory, ace_file,interp_type):
+def HMCcalc(reaction_dict, reaction_ind, directory, ace_file):
     results_vector = []
 
     central_xs, energy = cross_section(reaction_dict, reaction_ind, ace_file, directory)
-    sens_vec_values_adjusted = sense_interp(reaction_dict, reaction_ind, energy,interp_type)
+    sens_vec_values_adjusted = sense_interp(reaction_dict, reaction_ind, energy)
     
     for file in os.scandir(directory):
         filename = os.fsdecode(file)
@@ -246,46 +227,18 @@ def HMCcalc(reaction_dict, reaction_ind, directory, ace_file,interp_type):
             continue
     return results_vector
 
-def choose_interpolation():
-    print("What type of interpolation do you want to use for the sensitivity vector?: \
-          \n Linear interpolation == 1 \
-           \n Static hold interplation == 2")
-    interp_type = input()
-    return interp_type
-
 def main():
     directory = ace_directory()
     reaction_dir = add_reactions(directory)
     reactions_ind = list(reaction_dir.keys())
     central_file=central_file_decider(directory)
-    interp_type = choose_interpolation()
     
     for reaction_ind in reactions_ind:
-        results_vector = HMCcalc(reaction_dir, reaction_ind, directory, central_file, interp_type)
-        mean = np.mean(results_vector)
-        std_dev = np.std(results_vector)
-        kurt = kurtosis(results_vector)
-        skewness = skew(results_vector)
-        plt.hist(results_vector, bins=25, density=False)
+        central_xs, energy = cross_section(reaction_dir, reaction_ind, central_file, directory)
+        sens_vec_values_adjusted = sense_interp(reaction_dir, reaction_ind, energy)
 
-        # Set the plot title and axis labels
-        plt.title(f'delta k_eff {reaction_ind}_xs')
-        plt.xlabel('delta k_eff')
-        plt.ylabel('Number of Cases')
-        plt.figtext(.65, .85, f"mean = {round(mean,4)}")
-        plt.figtext(.65, .8, f"std dev = {round(std_dev,4)}")
-        plt.figtext(.65, .75, f"kurtosis = {round(kurt,4)}")
-        plt.figtext(.65, .7, f"skewness = {round(skewness,4)}")
-
-        if interp_type == "1":
-            plt.savefig(f'result_plots_linear_interp/figure_{reaction_ind}.png')
-        elif interp_type == "2":
-            plt.savefig(f'result_plots_static_interp/figure_{reaction_ind}.png')
-        plt.clf()
-        print(f"mean: {mean}")
-        print(f"std dev: {std_dev}")
-        print(f"skewness: {skewness}")
-        print(f"kurtosis: {kurt}")
+        plt.loglog(energy, sens_vec_values_adjusted)
+        plt.show()
     return mean, std_dev
 
 if __name__ == '__main__':
