@@ -169,7 +169,7 @@ def cross_section(reaction_dict, reaction_ind, ace_file, directory):
         energy = data.energy[spec_reaction.IE:]
     return xs, energy
 
-def sense_interp(reaction_dict, reaction_ind, energy):
+def sense_interp(reaction_dict, reaction_ind, energy,type):
     """Since the vectors are of different size we interpolate them. 
     Parameters: 
         reaction_dict: A dictionairy with the MT numbers as keys and the sensitivity vectors as values. 
@@ -260,9 +260,7 @@ def main():
     interp_type = choose_interpolation()
     
     for reaction_ind in reactions_ind:
-        results_vector = HMCcalc(reaction_dir, reaction_ind, directory, central_file)
-        
-        
+        results_vector = HMCcalc(reaction_dir, reaction_ind, directory, central_file, interp_type)
         mean = np.mean(results_vector)
         std_dev = np.std(results_vector)
 
