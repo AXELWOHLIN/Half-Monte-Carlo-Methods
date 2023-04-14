@@ -1,6 +1,7 @@
 import os
 import matplotlib.pyplot as plt
 import pyne.ace
+import requests
 import numpy as np
 from pyne.rxname import *
 from tkinter import Tk
@@ -168,7 +169,7 @@ def cross_section(reaction_dict, reaction_ind, ace_file, directory):
         energy = data.energy[spec_reaction.IE:]
     return xs, energy
 
-def sense_interp(reaction_dict, reaction_ind, energy):
+def sense_interp(reaction_dict, reaction_ind, energy,type):
     """Since the vectors are of different size we interpolate them. 
     Parameters: 
         reaction_dict: A dictionairy with the MT numbers as keys and the sensitivity vectors as values. 
@@ -179,8 +180,28 @@ def sense_interp(reaction_dict, reaction_ind, energy):
     """
     sens_vector_energy, sens_vector_values = reaction_dict[reaction_ind]
     energy *= 1e+06
-    sens_vec_values_adjusted = np.interp(energy,sens_vector_energy,sens_vector_values)
-    return  sens_vec_values_adjusted
+    sens_vec_linear = np.interp(energy,sens_vector_energy,sens_vector_values)
+
+    sens_vec_values_adjusted = np.zeros(len(energy))
+    for i, e in enumerate(energy):
+        idx = np.searchsorted(sens_vector_energy, e) - 1
+        if idx < 0:
+            idx = 0
+        elif idx >= len(sens_vector_values):
+            idx = len(sens_vector_values) - 1
+        sens_vec_values_adjusted[i] = sens_vector_values[idx]
+
+    plt.figure(1)
+    plt.plot(energy,sens_vec_linear)
+    plt.title("Linear interpolation sensitivity vector")
+    plt.savefig("result_plots_linear_interp/lin_sens_vector_notlog")
+    plt.figure(2)
+    plt.plot(energy,sens_vec_values_adjusted)
+    plt.title("Static hold interpolation sensitivity vector")
+    plt.savefig("result_plots_static_interp/static_sens_vector_notlog")
+    plt.show()
+    input("press any key to finish: ")
+    quit()
 
 def ace_reader(ace_file, directory):
     """Fortsätt dokumentera här. 
@@ -210,11 +231,11 @@ def ace_reader(ace_file, directory):
 
     return file_contents
 
-def HMCcalc(reaction_dict, reaction_ind, directory, ace_file):
+def HMCcalc(reaction_dict, reaction_ind, directory, ace_file,interp_type):
     results_vector = []
 
     central_xs, energy = cross_section(reaction_dict, reaction_ind, ace_file, directory)
-    sens_vec_values_adjusted = sense_interp(reaction_dict, reaction_ind, energy)
+    sens_vec_values_adjusted = sense_interp(reaction_dict, reaction_ind, energy,interp_type)
     
     for file in os.scandir(directory):
         filename = os.fsdecode(file)
@@ -227,16 +248,22 @@ def HMCcalc(reaction_dict, reaction_ind, directory, ace_file):
             continue
     return results_vector
 
+def choose_interpolation():
+    print("What type of interpolation do you want to use for the sensitivity vector?: \
+          \n Linear interpolation == 1 \
+           \n Static hold interplation == 2")
+    interp_type = input()
+    return interp_type
+
 def main():
     directory = ace_directory()
     reaction_dir = add_reactions(directory)
     reactions_ind = list(reaction_dir.keys())
     central_file=central_file_decider(directory)
+    interp_type = choose_interpolation()
     
     for reaction_ind in reactions_ind:
-        results_vector = HMCcalc(reaction_dir, reaction_ind, directory, central_file)
-        
-        
+        results_vector = HMCcalc(reaction_dir, reaction_ind, directory, central_file, interp_type)
         mean = np.mean(results_vector)
         std_dev = np.std(results_vector)
 
@@ -246,12 +273,14 @@ def main():
         plt.title(f'delta k_eff {reaction_ind}_xs')
         plt.xlabel('Values')
         plt.ylabel('Number of Cases')
-        plt.figtext(.65, .8, f"mean = {round(mean,7)}")
-        plt.figtext(.65, .7, f"std dev = {round(std_dev,7)}")
+        plt.figtext(.8, .8, f"mean = {round(mean,4)}")
+        plt.figtext(.8, .5, f"std dev = {round(std_dev,4)}")
 
-        plt.savefig(f'result_plots/figure_{reaction_ind}.png')
+        if interp_type == "1":
+            plt.savefig(f'result_plots_linear_interp/figure_{reaction_ind}.png')
+        elif interp_type == "2":
+            plt.savefig(f'result_plots_static_interp/figure_{reaction_ind}.png')
         plt.clf()
-        print(reaction_ind)
         print(mean)
         print(std_dev)
     return mean, std_dev

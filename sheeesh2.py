@@ -277,6 +277,7 @@ def main():
         elif interp_type == "2":
             plt.savefig(f'result_plots_static_interp/figure_{reaction_ind}.png')
         plt.clf()
+        print(reaction_ind)
         print(mean)
         print(std_dev)
     return mean, std_dev
