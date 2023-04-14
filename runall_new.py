@@ -48,12 +48,24 @@ def choose_csv():
         root = Tk()
         # Hide the main window
         root.withdraw()
-        # Show the file dialog and get the selected file
-        filename = filedialog.askopenfilename()
+        # ask the user to select a file using the filedialog
+        file_path = filedialog.askopenfilename()
+        print(file_path)
+            # if the user has selected a file
+        if file_path:
+            # get the folder that the file is in
+            folder_path = "/".join(file_path.split("/")[:-1])
+            # get the filename
+            filename = file_path.split("/")[-1]
+            # create the file directory string
+            file_directory = f"{folder_path}/{filename}"
+            print(file_directory)
     except:
         print("Tkinter is not available. Please enter the file path manually:")
-        filename = input()
-    sens_vector_energy, sens_vector_values = np_csvimport.csv_import(filename)
+        file_directory = input()
+    data = np.array(np.loadtxt(file_directory, delimiter=','))
+    sens_vector_energy = data[:, 0]
+    sens_vector_values = data[:, 1]
     return sens_vector_energy, sens_vector_values
 
 def choose_reaction(directory):
@@ -147,7 +159,6 @@ def central_file_decider(directory):
                 break
     return central_file
 
-
 def cross_section(reaction_dict, reaction_ind, ace_file, directory):
     """Picks out the cross sections from the ACE-files. 
     Parameters: 
@@ -183,7 +194,6 @@ def sense_interp(reaction_dict, reaction_ind, energy):
     sens_vec_values_adjusted = np.interp(energy,sens_vector_energy,sens_vector_values)
     return  sens_vec_values_adjusted
 
-
 def ace_reader(ace_file, directory):
     """Fortsätt dokumentera här. 
     Parameters: 
@@ -211,8 +221,6 @@ def ace_reader(ace_file, directory):
     file_contents = lib.tables[first_word]
 
     return file_contents
-
-
 
 def HMCcalc(reaction_dict, reaction_ind, directory, ace_file):
     results_vector = []
@@ -250,8 +258,8 @@ def main():
         plt.title(f'delta k_eff {reaction_ind}_xs')
         plt.xlabel('Values')
         plt.ylabel('Number of Cases')
-        plt.figtext(.65, .8, f"mean = {round(mean,7)}")
-        plt.figtext(.65, .7, f"std dev = {round(std_dev,7)}")
+        plt.figtext(.8, .8, f"mean = {round(mean,4)}")
+        plt.figtext(.8, .5, f"std dev = {round(std_dev,4)}")
 
         plt.savefig(f'result_plots/figure_{reaction_ind}.png')
         plt.clf()
