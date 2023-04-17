@@ -58,6 +58,49 @@ def choose_csv():
     sens_vector_values = data[:, 1]
     return sens_vector_energy, sens_vector_values
 
+
+
+def total_reactions_txt():
+    name_dict = {'2':'elastic', '4':'inelastic', '16':'2,2n', '17':'n,3n', '18':'fission'}
+    energy_vector = []
+
+    with open('csv_files/HEU-MET-FAST-001-001_MCNP_ENDF-B-VII.0-Continuous_SENS.txt') as f:
+        header_found = False
+        for line in f:
+            if 'energy' in line:
+                header_found = True
+                continue
+            else:
+                if header_found == True and line.startswith(' '):
+                    data = [energy_vector.append(float(x)) for x in line.split()]
+                else:   
+                    header_found = False
+
+    energy_vector = np.array(energy_vector)
+
+    first_word = '92235'
+    sensitivity_dict = {}
+    for reaction_ind, reaction_name  in name_dict.items():
+        sens_vec = []
+        with open('csv_files/HEU-MET-FAST-001-001_MCNP_ENDF-B-VII.0-Continuous_SENS.txt') as f:
+            header_found = False
+            for line in f:
+                if first_word in line and reaction_ind in line and reaction_name in line:
+                    header_found = True
+                    continue
+                else:
+                    if header_found == True and line.startswith(' '):
+                        data = [sens_vec.append(float(x)) for x in line.split()]
+                    else:   
+                        header_found = False
+        sens_vec = np.array(sens_vec)
+        sens_vec = sens_vec[-len(energy_vector):]
+        sensitivity_dict[reaction_ind] =( [energy_vector[::-1],sens_vec[::-1]] )
+
+
+    return sensitivity_dict
+
+
 def choose_reaction(directory):
     """Prompts the user to choose a reaction by presenting a series of reactions. The user chooses reaction 
     by typing the corresponding number. It then returns the MT number that corresponds to this reaction. 
@@ -82,17 +125,6 @@ def choose_reaction(directory):
     if int(choice) == 8:
         reaction_ind = int(input("Enter the MT number of your desired reaction: "))
         check_mt(directory, reaction_ind) #checks if valid MT number
-    elif int(choice) == 7:
-        print("Do you want to specifiy a sensitivity vector for each cross section (.csv) [1] or \
-              have it be automatically generated from a DICE text file (.txt)? [2] \n")
-        total_meth = input("Enter 1 or 2: ")
-        while total_meth not in ["1","2"]:
-            print("Incorrect usage, please specify '1' or '2'")
-            total_meth = input("Enter 1 or 2: ")
-        if total_meth == "1":
-            pass #Gör loop
-        elif total_meth == "2":
-            pass #gör olles
     else:
     # get the corresponding value based on the user's choice
         chosen_key = keys[int(choice)-1]
@@ -131,10 +163,21 @@ def add_reactions(directory):
     reaction_dict = {}
     while choice == "y":
         reaction_ind = choose_reaction(directory)
-        if type(reaction_dict) == dict:
-            #gör annorlunda
-        sens_vector_energy, sens_vector_values = choose_csv()
-        reaction_dict[reaction_ind] = [sens_vector_energy, sens_vector_values]
+        if int(reaction_ind) == 1:
+            print("Do you want to specifiy a sensitivity vector for each cross section (.csv) [1] or \
+              have it be automatically generated from a DICE text file (.txt)? [2] \n")
+            total_meth = input("Enter 1 or 2: ")
+            while total_meth not in ["1","2"]:
+                print("Incorrect usage, please specify '1' or '2'")
+                total_meth = input("Enter 1 or 2: ")
+            if total_meth == "1":
+                pass #Gör loop
+            elif total_meth == "2":
+                total_dictionary = total_reactions_txt() 
+            reaction_dict[reaction_ind] = total_dictionary
+        else:
+            sens_vector_energy, sens_vector_values = choose_csv()
+            reaction_dict[reaction_ind] = [sens_vector_energy, sens_vector_values]
         choice = input("Do you want to add another reaction? [y/n]: ")
     return reaction_dict
 
@@ -247,6 +290,7 @@ def ace_reader(ace_file, directory):
     return file_contents
 
 def HMCcalc(reaction_dict, reaction_ind, directory, central_file,interp_type):
+    
     results_vector = []
 
     central_xs, energy = cross_section(reaction_ind, central_file, directory)
@@ -318,42 +362,3 @@ if __name__ == '__main__':
 
 
 
-
-def total_reactions_txt(reaction_dict):
-    energy_vector = []
-
-    with open('csv_files/HEU-MET-FAST-001-001_MCNP_ENDF-B-VII.0-Continuous_SENS.txt') as f:
-        header_found = False
-        for line in f:
-            if 'energy' in line:
-                header_found = True
-                continue
-            else:
-                if header_found == True and line.startswith(' '):
-                    data = [energy_vector.append(float(x)) for x in line.split()]
-                else:   
-                    header_found = False
-
-    energy_vector = np.array(energy_vector)
-
-    first_word = '92235'
-    sensitivity_dict = {}
-    for reaction_ind, reaction_name  in reaction_dict.items():
-        sens_vec = []
-        with open('csv_files/HEU-MET-FAST-001-001_MCNP_ENDF-B-VII.0-Continuous_SENS.txt') as f:
-            header_found = False
-            for line in f:
-                if first_word in line and reaction_ind in line and reaction_name in line:
-                    header_found = True
-                    continue
-                else:
-                    if header_found == True and line.startswith(' '):
-                        data = [sens_vec.append(float(x)) for x in line.split()]
-                    else:   
-                        header_found = False
-        sens_vec = np.array(sens_vec)
-        sens_vec = sens_vec[-len(energy_vector):]
-        sensitivity_dict[reaction_ind] =( [energy_vector[::-1],sens_vec[::-1]] )
-
-
-    return sensitivity_dict
