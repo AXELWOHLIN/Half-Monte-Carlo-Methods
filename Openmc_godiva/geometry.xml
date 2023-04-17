@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
 <geometry>
-  <cell id="1" material="1" name="fuel" region="-22" universe="4" />
-  <cell id="5" material="void" name="outer" region="23 -24 25 -26 22 -27 28" universe="4" />
-  <surface coeffs="0.0 0.0 0.0 8.69696" id="22" type="sphere" />
-  <surface boundary="vacuum" coeffs="-25.0" id="23" type="x-plane" />
-  <surface boundary="vacuum" coeffs="25.0" id="24" type="x-plane" />
-  <surface boundary="vacuum" coeffs="-25.0" id="25" type="y-plane" />
-  <surface boundary="vacuum" coeffs="25.0" id="26" type="y-plane" />
-  <surface boundary="vacuum" coeffs="25.0" id="27" type="z-plane" />
-  <surface boundary="vacuum" coeffs="-25.0" id="28" type="z-plane" />
+  <cell id="1" material="1" name="fuel" region="-1" universe="1" />
+  <cell id="2" material="void" name="outer" region="2 -3 4 -5 1 -6 7" universe="1" />
+  <surface coeffs="0.0 0.0 0.0 8.69696" id="1" type="sphere" />
+  <surface boundary="vacuum" coeffs="-25.0" id="2" type="x-plane" />
+  <surface boundary="vacuum" coeffs="25.0" id="3" type="x-plane" />
+  <surface boundary="vacuum" coeffs="-25.0" id="4" type="y-plane" />
+  <surface boundary="vacuum" coeffs="25.0" id="5" type="y-plane" />
+  <surface boundary="vacuum" coeffs="25.0" id="6" type="z-plane" />
+  <surface boundary="vacuum" coeffs="-25.0" id="7" type="z-plane" />
 </geometry>
