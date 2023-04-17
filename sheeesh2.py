@@ -245,7 +245,7 @@ def HMCcalc(reaction_dict, reaction_ind, directory, central_file,interp_type):
             continue
         elif ".ace" in filename:
             xs, _ = cross_section(reaction_ind, filename, directory)
-            delta_k_eff = np.dot(sens_vec_values_adjusted,(xs.transpose()-central_xs.transpose()))
+            delta_k_eff = np.dot(sens_vec_values_adjusted,((xs.transpose()-central_xs.transpose())/central_xs.transpose()))
             results_vector.append(delta_k_eff)
             #print(f"Our scalar is {delta_k_eff}")
         else:
@@ -274,8 +274,8 @@ def main():
         plt.hist(results_vector, bins=25, density=False)
 
         # Set the plot title and axis labels
-        plt.title(f'delta k_eff {reaction_ind}_xs')
-        plt.xlabel('delta k_eff')
+        plt.title(f'% delta k_eff {reaction_ind}_xs')
+        plt.xlabel('% delta k_eff')
         plt.ylabel('Number of Cases')
         plt.figtext(.65, .85, f"mean = {round(mean,4)}")
         plt.figtext(.65, .8, f"std dev = {round(std_dev,4)}")
