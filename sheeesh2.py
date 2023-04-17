@@ -8,6 +8,8 @@ from tkinter import Tk
 from tkinter import *
 from tkinter import filedialog
 from tkinter.filedialog import askopenfilename
+from scipy.stats import skew
+from scipy.stats import norm, kurtosis
 
 
 def ace_directory(dir=0):
@@ -33,7 +35,8 @@ def ace_directory(dir=0):
 
 def choose_csv():
     """Prompts the user to choose a sensitivity vector by creating a Tkinter root window.
-    The sensitivity vectors is then saved in one vector with energies and one with the corresponding values.  
+    The sensitivity vectors is then saved in one vector with energies and one with the corresponding values.
+    The left column in your csv file should contain energies in MeV and your right column the sensitivity vector values.  
     Parameters: 
         none
     Returns:
@@ -59,7 +62,7 @@ def choose_reaction(directory):
     """Prompts the user to choose a reaction by presenting a series of reactions. The user chooses reaction 
     by typing the corresponding number. It then returns the MT number that corresponds to this reaction. 
     Parameters: 
-        none
+        directory: A string with the name of the chosen directory of the ace files.
     Returns:
         reaction_ind: an integer that corresponds to the MT number of the reaction type.
     """
@@ -87,8 +90,10 @@ def choose_reaction(directory):
 
 def check_mt(directory, reaction_ind):
     """
+    Checks if the MT number is valid and exists in the ace files.
     Parameters: 
-        none
+        directory: A string with the name of the chosen directory of the ace files.
+        reaction_ind: The MT number.
     Returns:
         reaction_ind: an integer that corresponds to the MT number of the reaction type.
     """
@@ -107,7 +112,7 @@ def check_mt(directory, reaction_ind):
 def add_reactions(directory):
     """Gives the user the alternative to add a reaction to the calculations. 
     Parameters: 
-        none
+        directory: A string with the name of the chosen directory of the ace files.
     Returns:
         reaction_dict: A dictionairy with the MT numbers as keys and the sensitivity vectors as values. 
     """
@@ -123,7 +128,7 @@ def add_reactions(directory):
 def central_file_decider(directory):
     """Decides which file to use as central file. 
     Parameters: 
-        directory: A string with the name of the chosen directory.
+        directory: A string with the name of the chosen directory of the ace files.
     Returns:
         central file: A string with the name of the chosen central file.
     """
@@ -147,13 +152,13 @@ def central_file_decider(directory):
                 break
     return central_file
 
-def cross_section(reaction_dict, reaction_ind, ace_file, directory):
+def cross_section(reaction_ind, ace_file, directory):
     """Picks out the cross sections from the ACE-files. 
     Parameters: 
         reaction_dict: A dictionairy with the MT numbers as keys and the sensitivity vectors as values. 
         reaction_ind: An integer that corresponds to the MT number of the reaction type.
         ace_file: A string with the name of the specific ACE-file.
-        directory: A string with the name of the chosen directory.
+        directory: A string with the name of the chosen directory of the ace files.
     Returns:
         xs: A vector with all the cross-sections from the chosen reaction.
         energy: A vector with all the energies from the chosen reaction.
@@ -200,7 +205,8 @@ def sense_interp(reaction_dict, reaction_ind, energy,type):
         quit()
 
 def ace_reader(ace_file, directory):
-    """Fortsätt dokumentera här. 
+    """Reads the ace files. Creates a new file "new_file.ace" to write the file contents of the selected ace file.
+    Only files with .ace in the filename is considered. A .xsdir file is needed to determine the used element. 
     Parameters: 
         ace_file: A string with the name of the specific ACE-file.
         directory: A string with the name of the chosen directory.
@@ -227,16 +233,18 @@ def ace_reader(ace_file, directory):
 
     return file_contents
 
-def HMCcalc(reaction_dict, reaction_ind, directory, ace_file,interp_type):
+def HMCcalc(reaction_dict, reaction_ind, directory, central_file,interp_type):
     results_vector = []
 
-    central_xs, energy = cross_section(reaction_dict, reaction_ind, ace_file, directory)
+    central_xs, energy = cross_section(reaction_ind, central_file, directory)
     sens_vec_values_adjusted = sense_interp(reaction_dict, reaction_ind, energy,interp_type)
     
     for file in os.scandir(directory):
         filename = os.fsdecode(file)
-        if ".ace" in filename:
-            xs, _ = cross_section(reaction_dict, reaction_ind, filename, directory)
+        if filename==central_file:
+            continue
+        elif ".ace" in filename:
+            xs, _ = cross_section(reaction_ind, filename, directory)
             delta_k_eff = np.dot(sens_vec_values_adjusted,(xs.transpose()-central_xs.transpose()))
             results_vector.append(delta_k_eff)
             #print(f"Our scalar is {delta_k_eff}")
@@ -245,10 +253,9 @@ def HMCcalc(reaction_dict, reaction_ind, directory, ace_file,interp_type):
     return results_vector
 
 def choose_interpolation():
-    print("What type of interpolation do you want to use for the sensitivity vector?: \
-          \n Linear interpolation == 1 \
-           \n Static hold interplation == 2")
-    interp_type = input()
+    print("Linear interpolation == 1\
+    \n Static hold interplation == 2")
+    interp_type = input("What type of interpolation do you want to use for the sensitivity vector?: ")
     return interp_type
 
 def main():
@@ -262,24 +269,28 @@ def main():
         results_vector = HMCcalc(reaction_dir, reaction_ind, directory, central_file, interp_type)
         mean = np.mean(results_vector)
         std_dev = np.std(results_vector)
-
+        kurt = kurtosis(results_vector)
+        skewness = skew(results_vector)
         plt.hist(results_vector, bins=25, density=False)
 
         # Set the plot title and axis labels
         plt.title(f'delta k_eff {reaction_ind}_xs')
-        plt.xlabel('Values')
+        plt.xlabel('delta k_eff')
         plt.ylabel('Number of Cases')
-        plt.figtext(.8, .8, f"mean = {round(mean,4)}")
-        plt.figtext(.8, .5, f"std dev = {round(std_dev,4)}")
+        plt.figtext(.65, .85, f"mean = {round(mean,4)}")
+        plt.figtext(.65, .8, f"std dev = {round(std_dev,4)}")
+        plt.figtext(.65, .75, f"kurtosis = {round(kurt,4)}")
+        plt.figtext(.65, .7, f"skewness = {round(skewness,4)}")
 
         if interp_type == "1":
             plt.savefig(f'result_plots_linear_interp/figure_{reaction_ind}.png')
         elif interp_type == "2":
             plt.savefig(f'result_plots_static_interp/figure_{reaction_ind}.png')
         plt.clf()
-        print(reaction_ind)
-        print(mean)
-        print(std_dev)
+        print(f"mean: {mean}")
+        print(f"std dev: {std_dev}")
+        print(f"skewness: {skewness}")
+        print(f"kurtosis: {kurt}")
     return mean, std_dev
 
 if __name__ == '__main__':
