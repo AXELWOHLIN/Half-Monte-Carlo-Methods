@@ -152,7 +152,7 @@ def central_file_decider(directory):
                 break
     return central_file
 
-def cross_section(reaction_dict, reaction_ind, ace_file, directory):
+def cross_section(reaction_ind, ace_file, directory):
     """Picks out the cross sections from the ACE-files. 
     Parameters: 
         reaction_dict: A dictionairy with the MT numbers as keys and the sensitivity vectors as values. 
@@ -236,7 +236,7 @@ def ace_reader(ace_file, directory):
 def HMCcalc(reaction_dict, reaction_ind, directory, central_file,interp_type):
     results_vector = []
 
-    central_xs, energy = cross_section(reaction_dict, reaction_ind, central_file, directory)
+    central_xs, energy = cross_section(reaction_ind, central_file, directory)
     sens_vec_values_adjusted = sense_interp(reaction_dict, reaction_ind, energy,interp_type)
     
     for file in os.scandir(directory):
@@ -244,7 +244,7 @@ def HMCcalc(reaction_dict, reaction_ind, directory, central_file,interp_type):
         if filename==central_file:
             continue
         elif ".ace" in filename:
-            xs, _ = cross_section(reaction_dict, reaction_ind, filename, directory)
+            xs, _ = cross_section(reaction_ind, filename, directory)
             delta_k_eff = np.dot(sens_vec_values_adjusted,(xs.transpose()-central_xs.transpose()))
             results_vector.append(delta_k_eff)
             #print(f"Our scalar is {delta_k_eff}")
@@ -253,7 +253,7 @@ def HMCcalc(reaction_dict, reaction_ind, directory, central_file,interp_type):
     return results_vector
 
 def choose_interpolation():
-    print("Linear interpolation == 1 \
+    print("Linear interpolation == 1\
     \n Static hold interplation == 2")
     interp_type = input("What type of interpolation do you want to use for the sensitivity vector?: ")
     return interp_type
