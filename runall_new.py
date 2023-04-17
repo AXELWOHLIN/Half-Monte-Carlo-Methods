@@ -80,10 +80,10 @@ def choose_reaction(directory):
         reaction_ind = int(input("Enter the MT number of your desired reaction: "))
         check_mt(directory, reaction_ind) #checks if valid MT number
     else:
-    # get the corresponding value based on the user's choice
+        # get the corresponding value based on the user's choice
         chosen_key = keys[int(choice)-1]
         reaction_ind= int(name_dict[chosen_key])
-        return reaction_ind
+    return reaction_ind
 
 def check_mt(directory, reaction_ind):
     """
@@ -212,10 +212,9 @@ def ace_reader(ace_file, directory):
 
 def HMCcalc(reaction_dict, reaction_ind, directory, ace_file):
     results_vector = []
-
     central_xs, energy = cross_section(reaction_dict, reaction_ind, ace_file, directory)
     sens_vec_values_adjusted = sense_interp(reaction_dict, reaction_ind, energy)
-    
+        
     for file in os.scandir(directory):
         filename = os.fsdecode(file)
         if ".ace" in filename:
@@ -249,7 +248,7 @@ def main():
         plt.figtext(.65, .8, f"mean = {round(mean,7)}")
         plt.figtext(.65, .7, f"std dev = {round(std_dev,7)}")
 
-        plt.savefig(f'result_plots/figure_{reaction_ind}.png')
+        plt.savefig(f'result_plots_linear_interp/figure_{reaction_ind}.png')
         plt.clf()
         print(reaction_ind)
         print(mean)
