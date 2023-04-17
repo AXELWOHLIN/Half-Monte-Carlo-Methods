@@ -100,6 +100,18 @@ def total_reactions_txt():
 
     return sensitivity_dict
 
+def total_reactions_csv(directory):
+    total_dict = {}
+    choice = "y"
+    print("You will now be prompted to select the available cross sections \
+        with their corresponding sensitivity vectors in .csv format to create the \
+            total directory \n")
+    while choice == "y":
+        reaction_ind = choose_reaction(directory)
+        sens_vector_energy, sens_vector_values = choose_csv()
+        total_dict[reaction_ind] = [sens_vector_energy, sens_vector_values]
+        choice = input("Do you have more sensitivity vectors to add? [y/n]: ")
+    return total_dict
 
 def choose_reaction(directory):
     """Prompts the user to choose a reaction by presenting a series of reactions. The user chooses reaction 
@@ -171,7 +183,7 @@ def add_reactions(directory):
                 print("Incorrect usage, please specify '1' or '2'")
                 total_meth = input("Enter 1 or 2: ")
             if total_meth == "1":
-                pass #Gör loop
+                total_dictionary = total_reactions_csv(directory) #Gör loop
             elif total_meth == "2":
                 total_dictionary = total_reactions_txt() 
             reaction_dict[reaction_ind] = total_dictionary
