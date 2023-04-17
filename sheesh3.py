@@ -61,7 +61,7 @@ def choose_csv():
 
 
 def total_reactions_txt():
-    name_dict = {'2':'elastic', '4':'inelastic', '16':'2,2n', '17':'n,3n', '18':'fission'}
+    name_dict = {'2':'elastic', '4':'inelastic', '16':'n,2n', '17':'n,3n', '18':'fission'}
     energy_vector = []
 
     with open('csv_files/HEU-MET-FAST-001-001_MCNP_ENDF-B-VII.0-Continuous_SENS.txt') as f:
@@ -96,6 +96,7 @@ def total_reactions_txt():
         sens_vec = np.array(sens_vec)
         sens_vec = sens_vec[-len(energy_vector):]
         sensitivity_dict[reaction_ind] =( [energy_vector[::-1],sens_vec[::-1]] )
+        print(len(sens_vec))
 
 
     return sensitivity_dict
@@ -220,6 +221,7 @@ def cross_section(reaction_ind, ace_file, directory):
         energy: A vector with all the energies from the chosen reaction.
     """
     data = ace_reader(ace_file, directory)
+    reaction_ind = int(reaction_ind)
     if reaction_ind == 1:
         xs = data.sigma_t
         energy = data.energy
@@ -289,24 +291,44 @@ def ace_reader(ace_file, directory):
 
     return file_contents
 
-def HMCcalc(reaction_dict, reaction_ind, directory, central_file,interp_type):
-    
-    results_vector = []
+def HMCcalc(reaction_dict, reaction_ind, directory, central_file, interp_type):
+    if int(reaction_ind) == 1:
+        results_vector = []
+        for reaction_number in reaction_dict[reaction_ind].keys():
+            central_xs, energy = cross_section(reaction_number, central_file, directory)
+            sens_vec_values_adjusted = sense_interp(reaction_dict[reaction_ind], reaction_number, energy, interp_type)
+            
+            for file in os.scandir(directory):
+                filename = os.fsdecode(file)
+                if filename==central_file:
+                    continue
+                elif ".ace" in filename:
+                    xs, _ = cross_section(reaction_number, filename, directory)
+                    delta_k_eff = np.dot(sens_vec_values_adjusted,(xs.transpose()-central_xs.transpose()))
+                    results_vector.append(delta_k_eff)
+                    #print(f"Our scalar is {delta_k_eff}")
+                else:
+                    continue
+        
+        results_matrix = np.array(results_vector).reshape((len(reaction_dict[reaction_ind]),-1))
+        results_vector = np.sum(results_matrix, axis=0)
+    else:
+        results_vector = []
 
-    central_xs, energy = cross_section(reaction_ind, central_file, directory)
-    sens_vec_values_adjusted = sense_interp(reaction_dict, reaction_ind, energy,interp_type)
-    
-    for file in os.scandir(directory):
-        filename = os.fsdecode(file)
-        if filename==central_file:
-            continue
-        elif ".ace" in filename:
-            xs, _ = cross_section(reaction_ind, filename, directory)
-            delta_k_eff = np.dot(sens_vec_values_adjusted,(xs.transpose()-central_xs.transpose()))
-            results_vector.append(delta_k_eff)
-            #print(f"Our scalar is {delta_k_eff}")
-        else:
-            continue
+        central_xs, energy = cross_section(reaction_ind, central_file, directory)
+        sens_vec_values_adjusted = sense_interp(reaction_dict, reaction_ind, energy,interp_type)
+        
+        for file in os.scandir(directory):
+            filename = os.fsdecode(file)
+            if filename==central_file:
+                continue
+            elif ".ace" in filename:
+                xs, _ = cross_section(reaction_ind, filename, directory)
+                delta_k_eff = np.dot(sens_vec_values_adjusted,(xs.transpose()-central_xs.transpose()))
+                results_vector.append(delta_k_eff)
+                #print(f"Our scalar is {delta_k_eff}")
+            else:
+                continue
     return results_vector
 
 def choose_interpolation():
