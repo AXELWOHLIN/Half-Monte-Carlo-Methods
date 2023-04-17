@@ -245,7 +245,7 @@ def HMCcalc(reaction_dict, reaction_ind, directory, central_file,interp_type):
             continue
         elif ".ace" in filename:
             xs, _ = cross_section(reaction_ind, filename, directory)
-            delta_k_eff = np.dot(sens_vec_values_adjusted,((xs.transpose()-central_xs.transpose())/central_xs.transpose()))
+            delta_k_eff = np.dot(sens_vec_values_adjusted,((xs.transpose()-central_xs.transpose())/central_xs.transpose()*100))
             results_vector.append(delta_k_eff)
             #print(f"Our scalar is {delta_k_eff}")
         else:
