@@ -183,7 +183,7 @@ def add_reactions(directory):
                 print("Incorrect usage, please specify '1' or '2'")
                 total_meth = input("Enter 1 or 2: ")
             if total_meth == "1":
-                pass #Gör loop
+                total_dictionary = total_reactions_csv() 
             elif total_meth == "2":
                 total_dictionary = total_reactions_txt() 
             reaction_dict[reaction_ind] = total_dictionary
