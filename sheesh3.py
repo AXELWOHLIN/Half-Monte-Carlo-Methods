@@ -82,6 +82,17 @@ def choose_reaction(directory):
     if int(choice) == 8:
         reaction_ind = int(input("Enter the MT number of your desired reaction: "))
         check_mt(directory, reaction_ind) #checks if valid MT number
+    elif int(choice) == 7:
+        print("Do you want to specifiy a sensitivity vector for each cross section (.csv) [1] or \
+              have it be automatically generated from a DICE text file (.txt)? [2] \n")
+        total_meth = input("Enter 1 or 2: ")
+        while total_meth not in ["1","2"]:
+            print("Incorrect usage, please specify '1' or '2'")
+            total_meth = input("Enter 1 or 2: ")
+        if total_meth == "1":
+            pass #Gör loop
+        elif total_meth == "2":
+            pass #gör olles
     else:
     # get the corresponding value based on the user's choice
         chosen_key = keys[int(choice)-1]
