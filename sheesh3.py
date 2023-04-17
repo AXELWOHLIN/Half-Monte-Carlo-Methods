@@ -131,6 +131,8 @@ def add_reactions(directory):
     reaction_dict = {}
     while choice == "y":
         reaction_ind = choose_reaction(directory)
+        if type(reaction_dict) == dict:
+            #gör annorlunda
         sens_vector_energy, sens_vector_values = choose_csv()
         reaction_dict[reaction_ind] = [sens_vector_energy, sens_vector_values]
         choice = input("Do you want to add another reaction? [y/n]: ")
