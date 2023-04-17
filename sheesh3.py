@@ -109,7 +109,7 @@ def total_reactions_csv(directory):
     while choice == "y":
         reaction_ind = choose_reaction(directory)
         sens_vector_energy, sens_vector_values = choose_csv()
-        total_dict[reaction_ind] = [sens_vector_energy, sens_vector_values]
+        total_dict[reaction_ind] = (sens_vector_energy, sens_vector_values)
         choice = input("Do you have more sensitivity vectors to add? [y/n]: ")
     return total_dict
 
