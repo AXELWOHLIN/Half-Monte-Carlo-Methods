@@ -74,9 +74,24 @@ name_dict = {"n,2n":(16),"n,3n":(17),"n,4n":(37) \
                 ,"fission":(18), "elastic":(2) \
                     ,"inelastic":(4), "n,gamma":(102) ,"total":(1)}
 
-for 
+plot_dict = {}
+file_dict = {}
+i = 0
+n = 0
 
+for reaction_ind in name_dict.values():
+    n = 0
     for file in os.scandir(directory):
         filename = os.fsdecode(file)
         if ".ace" in filename:
             xs, energy = cross_section(reaction_ind, filename, directory)
+            file_dict[n] = ([xs, energy])
+            n += 1
+            print(n)
+            
+    plot_dict[i] = file_dict
+    i += 1
+    print(i)
+
+print(len(plot_dict))
+print(len(file_dict))
