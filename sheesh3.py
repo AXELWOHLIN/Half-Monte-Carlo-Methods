@@ -124,7 +124,7 @@ def choose_reaction(directory):
     #Dictionary of common reactions and the corresponding MT numbers, other can be chosen to use another reaction
     name_dict = {"n,2n":(16),"n,3n":(17),"n,4n":(37) \
                     ,"fission":(18), "elastic":(2) \
-                        ,"inelastic":(4),"total":(1),"other":("other")}
+                        ,"inelastic":(4), "n,gamma":(102) ,"total":(1),"other":("other")}
 
     # list all the keys in name_dict
     keys = list(name_dict.keys())
