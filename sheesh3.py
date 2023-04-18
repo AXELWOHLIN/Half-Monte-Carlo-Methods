@@ -315,7 +315,13 @@ def HMCcalc(reaction_dict, reaction_ind, directory, central_file, interp_type):
                     continue
                 elif ".ace" in filename:
                     xs, _ = cross_section(reaction_number, filename, directory)
-                    delta_k_eff = np.dot(sens_vec_values_adjusted,(xs.transpose()-central_xs.transpose()))
+                    delta_k_eff = np.multiply(np.array(sens_vec_values_adjusted),np.array((xs.transpose()-central_xs.transpose())*100))
+                    for k in range(len(central_xs.transpose())):
+                        if central_xs.transpose()[k]!=0:
+                            delta_k_eff[k]=delta_k_eff[k]/central_xs.transpose()[k]
+                        else:
+                            delta_k_eff[k]=0
+                    delta_k_eff=np.sum(delta_k_eff)
                     results_vector.append(delta_k_eff)
                     #print(f"Our scalar is {delta_k_eff}")
                 else:
@@ -335,7 +341,13 @@ def HMCcalc(reaction_dict, reaction_ind, directory, central_file, interp_type):
                 continue
             elif ".ace" in filename:
                 xs, _ = cross_section(reaction_ind, filename, directory)
-                delta_k_eff = np.dot(sens_vec_values_adjusted,((xs.transpose()-central_xs.transpose())/central_xs.transpose()*100))
+                delta_k_eff = np.multiply(np.array(sens_vec_values_adjusted),np.array((xs.transpose()-central_xs.transpose())*100))
+                for k in range(len(central_xs.transpose())):
+                    if central_xs.transpose()[k]!=0:
+                        delta_k_eff[k]=delta_k_eff[k]/central_xs.transpose()[k]
+                    else:
+                        delta_k_eff[k]=0
+                delta_k_eff=np.sum(delta_k_eff)
                 results_vector.append(delta_k_eff)
                 #print(f"Our scalar is {delta_k_eff}")
             else:
