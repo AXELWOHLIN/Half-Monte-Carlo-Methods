@@ -71,16 +71,20 @@ def ace_reader(ace_file, directory):
 
 
 name_dict = {"n,2n":(16),"n,3n":(17),"n,4n":(37) \
-                ,"fission":(18), "elastic":(2) \
-                    ,"inelastic":(4), "n,gamma":(102) ,"total":(1)}
+               ,"fission":(18), "elastic":(2) \
+                  ,"inelastic":(4), "n,gamma":(102) ,"total":(1)}
+
+
+name_list = []
+for i in name_dict.keys():
+    name_list.append(i)
 
 plot_dict = {}
-file_dict = {}
 i = 0
-n = 0
 
 for reaction_ind in name_dict.values():
     n = 0
+    file_dict = {}
     for file in os.scandir(directory):
         filename = os.fsdecode(file)
         if ".ace" in filename:
@@ -91,7 +95,19 @@ for reaction_ind in name_dict.values():
             
     plot_dict[i] = file_dict
     i += 1
-    print(i)
 
-print(len(plot_dict))
-print(len(file_dict))
+
+for dict_key in plot_dict.keys():
+    fig, axs = plt.subplots()
+    print(dict_key)
+    # Step 3: Loop through the files in each set and plot the vectors on the corresponding subplot
+    for i in plot_dict[dict_key].keys():
+        y, x = plot_dict[dict_key][i]
+        axs.loglog(x, y)  # plot the vector and add a label
+    
+    # Step 4: Customize the subplots
+    axs.set_title(f'Cross section plot:{name_list[dict_key]}')
+    axs.set_xlabel("Energy")
+    axs.set_ylabel("Cross Section")
+    plt.savefig(f'cross_section_plots/figure_{name_list[dict_key]}.png')
+plt.show()
