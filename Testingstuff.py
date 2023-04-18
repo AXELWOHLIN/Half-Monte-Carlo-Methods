@@ -239,13 +239,17 @@ def cross_section(reaction_ind, ace_file, directory):
     elif reaction_ind == 456:
         xs = data.nu_p_value
         energy = data.nu_p_energy
+        print(energy)
     elif reaction_ind == 452:
-        xs = data.nu_t_type
+        xs = data.nu_t_value
         energy = data.nu_t_energy
+        
     else:
         xs = data.reactions[reaction_ind].sigma
         spec_reaction = data.reactions[reaction_ind]
         energy = data.energy[spec_reaction.IE:]
+        print(energy)
+        print(len(energy))
     return xs, energy
 
 def sense_interp(reaction_dict, reaction_ind, energy,type):
@@ -349,9 +353,6 @@ def HMCcalc(reaction_dict, reaction_ind, directory, central_file, interp_type):
                 continue
             elif ".ace" in filename:
                 xs, _ = cross_section(reaction_ind, filename, directory)
-                print(xs)
-                print(central_xs)
-                print(sens_vec_values_adjusted)
                 delta_k_eff = np.multiply(np.array(sens_vec_values_adjusted),np.array((xs.transpose()-central_xs.transpose())*100))
                 for k in range(len(central_xs.transpose())):
                     if central_xs.transpose()[k]!=0:
