@@ -1,6 +1,7 @@
 import os
 import matplotlib.pyplot as plt
 import pyne.ace
+import pyne.rxname as rx
 import requests
 import numpy as np
 from pyne.rxname import *
@@ -35,4 +36,8 @@ lib.read(first_word)
 lib.tables
 file_contents = lib.tables[first_word]
 
-print(file_contents.reactions)
+reaction = file_contents.reactions
+print(reaction)
+for key, value in reaction.items():
+    mt_number = key
+    print(rx.label(int(mt_number)))
