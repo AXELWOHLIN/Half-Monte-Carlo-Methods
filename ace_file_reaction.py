@@ -1,7 +1,6 @@
 import os
 import matplotlib.pyplot as plt
 import pyne.ace
-import pyne.rxname as rx
 import requests
 import numpy as np
 from pyne.rxname import *
@@ -37,9 +36,7 @@ lib.tables
 file_contents = lib.tables[first_word]
 
 reaction = file_contents.reactions
+print(reaction)
 for key, value in reaction.items():
     mt_number = key
     print(rx.label(int(mt_number)))
-
-if os.path.exists('new_file.ace'):
-    os.remove('new_file.ace')
