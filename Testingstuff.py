@@ -238,14 +238,14 @@ def cross_section(reaction_ind, ace_file, directory):
         energy = data.energy
     elif reaction_ind == 456:
         xs = data.nu_p_value
-        energy = data.nu_p_energy
-        energy_t = data.energy
-        energy = xs_interp(energy_t, energy, xs)
+        energy_short = data.nu_t_energy
+        energy = data.energy
+        xs = xs_interp(energy, energy_short, xs)
     elif reaction_ind == 452:
         xs = data.nu_t_value
-        energy = data.nu_t_energy
-        energy_t = data.energy
-        energy = xs_interp(energy_t, energy, xs)
+        energy_short = data.nu_t_energy
+        energy = data.energy
+        xs = xs_interp(energy, energy_short, xs)
     else:
         xs = data.reactions[reaction_ind].sigma
         spec_reaction = data.reactions[reaction_ind]
@@ -269,7 +269,7 @@ def xs_interp(energy, energy_unfixed, xs):
 
 
 
-def sens_interp(reaction_dict, reaction_ind, energy,type):
+def sense_interp(reaction_dict, reaction_ind, energy,type):
     """Since the vectors are of different size we interpolate them. 
     Parameters: 
         reaction_dict: A dictionairy with the MT numbers as keys and the sensitivity vectors as values. 
