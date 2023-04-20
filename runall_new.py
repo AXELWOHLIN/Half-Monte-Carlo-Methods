@@ -253,6 +253,8 @@ def main():
         print(reaction_ind)
         print(mean)
         print(std_dev)
+        if os.path.exists('new_file.ace'):
+            os.remove('new_file.ace')
     return mean, std_dev
 
 if __name__ == '__main__':

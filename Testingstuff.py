@@ -33,7 +33,7 @@ def ace_directory(dir=0):
         directory = dir
     return directory
 
-def choose_csv():
+def choose_csv(reaction_ind):
     """Prompts the user to choose a sensitivity vector by creating a Tkinter root window.
     The sensitivity vectors is then saved in one vector with energies and one with the corresponding values.
     The left column in your csv file should contain energies in MeV and your right column the sensitivity vector values.  
@@ -43,25 +43,30 @@ def choose_csv():
         sens_vector_energy: a sensitivity vector in eV 
         sens_vector_values: The corresponding values to the sensitivity vector 
     """
-    try:
-        print("\nPlease choose a sensitivity vector in .csv format:")
-        root = Tk()
-        # Hide the main window
-        root.withdraw()
-        # ask the user to select a file using the filedialog
-        file_path = filedialog.askopenfilename()
-    except:
-        print("Tkinter is not available. Please enter the file path manually:")
-        file_path = input()
-    data = np.array(np.loadtxt(file_path, delimiter=','))
-    sens_vector_energy = data[:, 0]
-    sens_vector_values = data[:, 1]
+    choice = input('To enter corresponding csv files press "1" otherwise press "2" to generate from dice textfile: ')
+    if int(choice) == 1:
+        try:
+            print("\nPlease choose a sensitivity vector in .csv format:")
+            root = Tk()
+            # Hide the main window
+            root.withdraw()
+            # ask the user to select a file using the filedialog
+            file_path = filedialog.askopenfilename()
+        except:
+            print("Tkinter is not available. Please enter the file path manually:")
+            file_path = input()
+        data = np.array(np.loadtxt(file_path, delimiter=','))
+        sens_vector_energy = data[:, 0]
+        sens_vector_values = data[:, 1]
+    elif int(choice) == 2:
+        reaction_dict = total_reactions_txt()
+        sens_vector_energy, sens_vector_values = reaction_dict[str(reaction_ind)]
     return sens_vector_energy, sens_vector_values
 
 
 
 def total_reactions_txt():
-    name_dict = {'2':'elastic', '4':'inelastic', '16':'n,2n', '17':'n,3n', '18':'fission'}
+    name_dict = {'2':'elastic', '4':'inelastic', '16':'n,2n', '17':'n,3n', '18':'fission','452':'nubar','456':'prompt,nu', '102':'n,gamma'}
     energy_vector = []
 
     with open('csv_files/HEU-MET-FAST-001-001_MCNP_ENDF-B-VII.0-Continuous_SENS.txt') as f:
@@ -94,7 +99,8 @@ def total_reactions_txt():
                     else:   
                         header_found = False
         sens_vec = np.array(sens_vec)
-        sens_vec = sens_vec[-len(energy_vector):]
+        sens_vec = sens_vec[11:(len(energy_vector)+10)]
+        sens_vec = np.append(sens_vec,0)
         sensitivity_dict[reaction_ind] =( [energy_vector[::-1],sens_vec[::-1]] )
 
 
@@ -186,9 +192,9 @@ def add_reactions(directory):
                 total_dictionary = total_reactions_csv(directory) 
             elif total_meth == "2":
                 total_dictionary = total_reactions_txt() 
-            reaction_dict[reaction_ind] = total_dictionary
+                reaction_dict[reaction_ind] = total_dictionary
         else:
-            sens_vector_energy, sens_vector_values = choose_csv()
+            sens_vector_energy, sens_vector_values = choose_csv(reaction_ind)
             reaction_dict[reaction_ind] = [sens_vector_energy, sens_vector_values]
         choice = input("Do you want to add another reaction? [y/n]: ")
     return reaction_dict
@@ -250,8 +256,6 @@ def cross_section(reaction_ind, ace_file, directory):
         xs = data.reactions[reaction_ind].sigma
         spec_reaction = data.reactions[reaction_ind]
         energy = data.energy[spec_reaction.IE:]
-        print(energy)
-        print(len(energy))
     return xs, energy
 
 
@@ -391,7 +395,8 @@ def choose_interpolation():
     return interp_type
 
 def main():
-    directory = ace_directory()
+    directory = 'U235.nuss.10.10.2016'
+    directory = ace_directory(directory)
     reaction_dir = add_reactions(directory)
     reactions_ind = list(reaction_dir.keys())
     central_file=central_file_decider(directory)
