@@ -112,7 +112,7 @@ def total_reactions_txt():
 
 
 
-def osama(xs, xs_energy, sens_energy):
+def bin_averager(xs, xs_energy, sens_energy):
     bin_avg = []
     for i in range(len(sens_energy)-1):
         bin_ind = np.where((xs_energy >= sens_energy[i]) & (xs_energy < sens_energy[i+1]))[0]
