@@ -423,6 +423,8 @@ def main():
         print(f"std dev: {std_dev}")
         print(f"skewness: {skewness}")
         print(f"kurtosis: {kurt}")
+        if os.path.exists('new_file.ace'):
+            os.remove('new_file.ace')
     return mean, std_dev
 
 if __name__ == '__main__':

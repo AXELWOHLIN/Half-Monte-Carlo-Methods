@@ -115,7 +115,6 @@ for dict_key in plot_dict.keys():
     axs.set_xlabel("Energy")
     axs.set_ylabel("Cross Section")
     plt.savefig(f'cross_section_plots/figure_{name_list[dict_key]}.png')
-plt.show()
 
 if os.path.exists('new_file.ace'):
     os.remove('new_file.ace')
