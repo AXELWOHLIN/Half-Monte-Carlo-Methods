@@ -331,11 +331,12 @@ def ace_reader(ace_file, directory):
     return file_contents
 
 def HMCcalc(reaction_dict, reaction_ind, directory, central_file, interp_type):
+    sens_vector_energy, sens_vector_values = reaction_dict[reaction_ind]
     if int(reaction_ind) == 1:
         results_vector = []
         for reaction_number in reaction_dict[reaction_ind].keys():
-            sens_vector_energy, sens_vector_values = reaction_dict[reaction_ind]
             central_xs, energy = cross_section(reaction_number, central_file, directory)
+            energy *= 1e+06
             central_xs_values_adjusted = xs_interp(sens_vector_energy, energy, central_xs)
             
 
@@ -365,6 +366,7 @@ def HMCcalc(reaction_dict, reaction_ind, directory, central_file, interp_type):
 
         sens_vector_energy, sens_vector_values = reaction_dict[reaction_ind]
         central_xs, energy = cross_section(reaction_ind, central_file, directory)
+        energy *= 1e+06
         central_xs_values_adjusted = xs_interp(sens_vector_energy, energy, central_xs)
 
         for file in os.scandir(directory):
@@ -374,7 +376,7 @@ def HMCcalc(reaction_dict, reaction_ind, directory, central_file, interp_type):
                 elif ".ace" in filename:
                     xs, _ = cross_section(reaction_ind, filename, directory)
                     xs_values_adjusted = xs_interp(sens_vector_energy, energy, xs)
-                    delta_k_eff = np.multiply(np.array(sens_vector_energy),np.array((xs_values_adjusted.transpose()-central_xs_values_adjusted.transpose())))
+                    delta_k_eff = np.multiply(np.array(sens_vector_values),np.array((xs_values_adjusted.transpose()-central_xs_values_adjusted.transpose())))
                     for k in range(len(central_xs_values_adjusted.transpose())):
                         if central_xs_values_adjusted.transpose()[k]!=0:
                             delta_k_eff[k]=delta_k_eff[k]/central_xs_values_adjusted.transpose()[k]
