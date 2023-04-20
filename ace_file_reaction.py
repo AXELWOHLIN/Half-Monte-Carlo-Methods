@@ -41,3 +41,6 @@ print(reaction)
 for key, value in reaction.items():
     mt_number = key
     print(rx.label(int(mt_number)))
+
+if os.path.exists('new_file.ace'):
+    os.remove('new_file.ace')
