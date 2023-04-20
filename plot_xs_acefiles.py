@@ -33,6 +33,12 @@ def cross_section(reaction_ind, ace_file, directory):
     if reaction_ind == 1:
         xs = data.sigma_t
         energy = data.energy
+    elif reaction_ind == 456:
+        xs = data.nu_p_value
+        energy = data.nu_p_energy
+    elif reaction_ind == 452:
+        xs = data.nu_t_value
+        energy = data.nu_t_energy
     else:
         xs = data.reactions[reaction_ind].sigma
         spec_reaction = data.reactions[reaction_ind]
@@ -72,7 +78,7 @@ def ace_reader(ace_file, directory):
 
 name_dict = {"n,2n":(16),"n,3n":(17),"n,4n":(37) \
                ,"fission":(18), "elastic":(2) \
-                  ,"inelastic":(4), "n,gamma":(102) ,"total":(1)}
+                  ,"inelastic":(4), "n,gamma":(102) ,"total":(1), "promt,nubar":(456), "nubar":(452)}
 
 
 name_list = []
@@ -90,8 +96,8 @@ for reaction_ind in name_dict.values():
         if ".ace" in filename:
             xs, energy = cross_section(reaction_ind, filename, directory)
             file_dict[n] = ([xs, energy])
-            n += 1
             print(n)
+            n += 1
             
     plot_dict[i] = file_dict
     i += 1
@@ -99,7 +105,6 @@ for reaction_ind in name_dict.values():
 
 for dict_key in plot_dict.keys():
     fig, axs = plt.subplots()
-    print(dict_key)
     # Step 3: Loop through the files in each set and plot the vectors on the corresponding subplot
     for i in plot_dict[dict_key].keys():
         y, x = plot_dict[dict_key][i]
@@ -110,4 +115,6 @@ for dict_key in plot_dict.keys():
     axs.set_xlabel("Energy")
     axs.set_ylabel("Cross Section")
     plt.savefig(f'cross_section_plots/figure_{name_list[dict_key]}.png')
-plt.show()
+
+if os.path.exists('new_file.ace'):
+    os.remove('new_file.ace')
