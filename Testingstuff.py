@@ -396,12 +396,13 @@ def choose_interpolation():
 
 def bin_averager(xs, xs_energy, sens_energy):
     bin_avg = []
-    xs_energy = xs_energy*10e6
+    xs_energy = xs_energy*10e5
     for i in range(len(sens_energy)-1):
         bin_ind = np.where((xs_energy >= sens_energy[i]) & (xs_energy < sens_energy[i+1]))[0]
         if len(bin_ind) != 0:
-            xsbind = xs[bin_ind]
-            bin_avg = np.append(bin_avg, np.mean(xsbind, axis=0))
+            bin_avg = np.append(bin_avg, np.mean(xs[bin_ind], axis=0))
+        elif i>0:
+            bin_avg = np.append(bin_avg, bin_avg[i-1])
         else:
             bin_avg = np.append(bin_avg, 0)
     return bin_avg
