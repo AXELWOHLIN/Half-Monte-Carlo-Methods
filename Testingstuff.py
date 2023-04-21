@@ -63,8 +63,6 @@ def choose_csv(reaction_ind):
         sens_vector_energy, sens_vector_values = reaction_dict[str(reaction_ind)]
     return sens_vector_energy, sens_vector_values
 
-
-
 def total_reactions_txt():
     name_dict = {'2':'elastic', '4':'inelastic', '16':'n,2n', '17':'n,3n', '18':'fission','452':'nubar','456':'prompt,nu', '102':'n,gamma', '37':'n,4n'}
     energy_vector = []
@@ -347,14 +345,14 @@ def HMCcalc(reaction_dict, reaction_ind, directory, central_file, interp_type):
                 elif ".ace" in filename:
                     xs, energy = cross_section(reaction_number, filename, directory)
                     bin_avg = bin_averager(xs, energy, sens_energy)
-                    delta_k_eff = np.multiply(sens_values[:-1], np.array((bin_avg.transpose()-bin_avg_central.transpose())))
+                    delta_k_eff = np.multiply(sens_values, np.array((bin_avg.transpose()-bin_avg_central.transpose())))
                     for k in range(len(bin_avg_central.transpose())):
                         if bin_avg_central.transpose()[k]!=0:
                             delta_k_eff[k]=delta_k_eff[k]/bin_avg_central.transpose()[k]
                         else:
                             delta_k_eff[k]=0
                     delta_k_eff=np.sum(delta_k_eff)
-                    results_vector.append(delta_k_eff)
+                    results_vector.append(delta_k_eff*1e+05)
                     #print(f"Our scalar is {delta_k_eff}")
                 else:
                     continue
@@ -374,14 +372,14 @@ def HMCcalc(reaction_dict, reaction_ind, directory, central_file, interp_type):
             elif ".ace" in filename:
                 xs, energy = cross_section(reaction_ind, filename, directory)
                 bin_avg = bin_averager(xs, energy, sens_energy)
-                delta_k_eff = np.multiply(sens_values[:-1], np.array((bin_avg.transpose()-bin_avg_central.transpose())))
+                delta_k_eff = np.multiply(sens_values, np.array((bin_avg.transpose()-bin_avg_central.transpose())))
                 for k in range(len(bin_avg_central.transpose())):
                     if bin_avg_central.transpose()[k]!=0:
                         delta_k_eff[k]=delta_k_eff[k]/bin_avg_central.transpose()[k]
                     else:
                         delta_k_eff[k]=0
                 delta_k_eff=np.sum(delta_k_eff)
-                results_vector.append(delta_k_eff)
+                results_vector.append(delta_k_eff*1e+05)
                 #print(f"Our scalar is {delta_k_eff}")
             else:
                 continue
@@ -396,7 +394,7 @@ def choose_interpolation():
 
 def bin_averager(xs, xs_energy, sens_energy):
     bin_avg = []
-    xs_energy = xs_energy*10e5
+    xs_energy = xs_energy*1e+06
     for i in range(len(sens_energy)-1):
         bin_ind = np.where((xs_energy >= sens_energy[i]) & (xs_energy < sens_energy[i+1]))[0]
         if len(bin_ind) != 0:
@@ -405,6 +403,11 @@ def bin_averager(xs, xs_energy, sens_energy):
             bin_avg = np.append(bin_avg, bin_avg[i-1])
         else:
             bin_avg = np.append(bin_avg, 0)
+    bin_ind = np.where((xs_energy>= sens_energy[-1]))[0]
+    if len(bin_ind) != 0:
+        bin_avg = np.append(bin_avg, np.mean(xs[bin_ind], axis=0))
+    else:
+        bin_avg = np.append(bin_avg, bin_avg[-1])
     return bin_avg
 
 def main():
