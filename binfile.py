@@ -114,20 +114,34 @@ def total_reactions_txt():
 
 def bin_averager(xs, xs_energy, sens_energy):
     bin_avg = []
+    bin_plot = []
     for i in range(len(sens_energy)-1):
         bin_ind = np.where((xs_energy >= sens_energy[i]) & (xs_energy < sens_energy[i+1]))[0]
+        print(bin_ind)   
         if len(bin_ind) != 0:
             bin_avg = np.append(bin_avg, np.mean(xs[bin_ind], axis=0))
+        elif i>0:
+            bin_avg = np.append(bin_avg, bin_avg[i-1])
         else:
             bin_avg = np.append(bin_avg, 0)
-    return bin_avg
+    return bin_avg, bin_plot
 
+reaction = '17'
 
-xs, xs_energy = cross_section(2, ace_file, directory)
+xs, xs_energy = cross_section(int(reaction), ace_file, directory)
 xs_energy = xs_energy*10e6
-#print(xs_energy)
+ind_e = np.where(xs_energy == 2e6)[0][0] 
+print(ind_e)
+xs_avg = np.mean(xs[0])
 sens_dict = total_reactions_txt()
-sens_energy, _ = sens_dict['2']
+sens_energy, _ = sens_dict[reaction]
+print(xs_energy[ind_e]==sens_energy[-1])
+print(sens_energy[-20:])
+bin_averages, bin_plot = bin_averager(xs, xs_energy, sens_energy)
+y_values = sens_energy[:-1]
 
-bin_averages = osama(xs, xs_energy, sens_energy)
-print(len(bin_averages))
+x_values = bin_averages
+
+
+plt.loglog(y_values, x_values)
+plt.show()

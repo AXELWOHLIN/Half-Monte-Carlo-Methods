@@ -66,7 +66,7 @@ def choose_csv(reaction_ind):
 
 
 def total_reactions_txt():
-    name_dict = {'2':'elastic', '4':'inelastic', '16':'n,2n', '17':'n,3n', '18':'fission','452':'nubar','456':'prompt,nu', '102':'n,gamma'}
+    name_dict = {'2':'elastic', '4':'inelastic', '16':'n,2n', '17':'n,3n', '18':'fission','452':'nubar','456':'prompt,nu', '102':'n,gamma', '37':'n,4n'}
     energy_vector = []
 
     with open('csv_files/HEU-MET-FAST-001-001_MCNP_ENDF-B-VII.0-Continuous_SENS.txt') as f:
@@ -90,7 +90,7 @@ def total_reactions_txt():
         with open('csv_files/HEU-MET-FAST-001-001_MCNP_ENDF-B-VII.0-Continuous_SENS.txt') as f:
             header_found = False
             for line in f:
-                if first_word in line and reaction_ind in line and reaction_name in line:
+                if first_word in line and reaction_name in line:
                     header_found = True
                     continue
                 else:
@@ -102,8 +102,6 @@ def total_reactions_txt():
         sens_vec = sens_vec[11:(len(energy_vector)+10)]
         sens_vec = np.append(sens_vec,0)
         sensitivity_dict[reaction_ind] =( [energy_vector[::-1],sens_vec[::-1]] )
-
-
     return sensitivity_dict
 
 def total_reactions_csv(directory):
@@ -140,7 +138,7 @@ def choose_reaction(directory):
     for i, key in enumerate(keys):
         print(f"{i+1}. {key}")
     choice = input("Enter the number of the reaction: ")
-    if int(choice) == 11:
+    if choice == "11":
         reaction_ind = int(input("Enter the MT number of your desired reaction: "))
         check_mt(directory, reaction_ind) #checks if valid MT number
     else:
@@ -271,8 +269,6 @@ def xs_interp(energy, energy_unfixed, xs):
     xs_values_adjusted = np.interp(energy, energy_unfixed, xs)
     return  xs_values_adjusted
 
-
-
 def sense_interp(reaction_dict, reaction_ind, energy,type):
     """Since the vectors are of different size we interpolate them. 
     Parameters: 
@@ -339,19 +335,22 @@ def HMCcalc(reaction_dict, reaction_ind, directory, central_file, interp_type):
     if int(reaction_ind) == 1:
         results_vector = []
         for reaction_number in reaction_dict[reaction_ind].keys():
+            sens_energy, sens_values = (reaction_dict[1])[reaction_number]
             central_xs, energy = cross_section(reaction_number, central_file, directory)
-            sens_vec_values_adjusted = sense_interp(reaction_dict[reaction_ind], reaction_number, energy, interp_type)
+            bin_avg_central = bin_averager(central_xs, energy, sens_energy)
+            #sens_vec_values_adjusted = sense_interp(reaction_dict[reaction_ind], reaction_number, energy, interp_type)
 
             for file in os.scandir(directory):
                 filename = os.fsdecode(file)
                 if filename==central_file:
                     continue
                 elif ".ace" in filename:
-                    xs, _ = cross_section(reaction_number, filename, directory)
-                    delta_k_eff = np.multiply(np.array(sens_vec_values_adjusted),np.array((xs.transpose()-central_xs.transpose())*100))
-                    for k in range(len(central_xs.transpose())):
-                        if central_xs.transpose()[k]!=0:
-                            delta_k_eff[k]=delta_k_eff[k]/central_xs.transpose()[k]
+                    xs, energy = cross_section(reaction_number, filename, directory)
+                    bin_avg = bin_averager(xs, energy, sens_energy)
+                    delta_k_eff = np.multiply(sens_values[:-1], np.array((bin_avg.transpose()-bin_avg_central.transpose())))
+                    for k in range(len(bin_avg_central.transpose())):
+                        if bin_avg_central.transpose()[k]!=0:
+                            delta_k_eff[k]=delta_k_eff[k]/bin_avg_central.transpose()[k]
                         else:
                             delta_k_eff[k]=0
                     delta_k_eff=np.sum(delta_k_eff)
@@ -364,20 +363,21 @@ def HMCcalc(reaction_dict, reaction_ind, directory, central_file, interp_type):
         results_vector = np.sum(results_matrix, axis=0)
     else:
         results_vector = []
-
+        sens_energy, sens_values = reaction_dict[reaction_ind]
         central_xs, energy = cross_section(reaction_ind, central_file, directory)
-        sens_vec_values_adjusted = sense_interp(reaction_dict, reaction_ind, energy,interp_type)
+        bin_avg_central = bin_averager(central_xs, energy, sens_energy)
 
         for file in os.scandir(directory):
             filename = os.fsdecode(file)
             if filename==central_file:
                 continue
             elif ".ace" in filename:
-                xs, _ = cross_section(reaction_ind, filename, directory)
-                delta_k_eff = np.multiply(np.array(sens_vec_values_adjusted),np.array((xs.transpose()-central_xs.transpose())*100))
-                for k in range(len(central_xs.transpose())):
-                    if central_xs.transpose()[k]!=0:
-                        delta_k_eff[k]=delta_k_eff[k]/central_xs.transpose()[k]
+                xs, energy = cross_section(reaction_ind, filename, directory)
+                bin_avg = bin_averager(xs, energy, sens_energy)
+                delta_k_eff = np.multiply(sens_values[:-1], np.array((bin_avg.transpose()-bin_avg_central.transpose())))
+                for k in range(len(bin_avg_central.transpose())):
+                    if bin_avg_central.transpose()[k]!=0:
+                        delta_k_eff[k]=delta_k_eff[k]/bin_avg_central.transpose()[k]
                     else:
                         delta_k_eff[k]=0
                 delta_k_eff=np.sum(delta_k_eff)
@@ -393,6 +393,19 @@ def choose_interpolation():
     \n Static hold interplation == 2")
     interp_type = input("What type of interpolation do you want to use for the sensitivity vector?: ")
     return interp_type
+
+def bin_averager(xs, xs_energy, sens_energy):
+    bin_avg = []
+    xs_energy = xs_energy*10e5
+    for i in range(len(sens_energy)-1):
+        bin_ind = np.where((xs_energy >= sens_energy[i]) & (xs_energy < sens_energy[i+1]))[0]
+        if len(bin_ind) != 0:
+            bin_avg = np.append(bin_avg, np.mean(xs[bin_ind], axis=0))
+        elif i>0:
+            bin_avg = np.append(bin_avg, bin_avg[i-1])
+        else:
+            bin_avg = np.append(bin_avg, 0)
+    return bin_avg
 
 def main():
     directory = 'U235.nuss.10.10.2016'
@@ -422,7 +435,7 @@ def main():
         if interp_type == "1":
             plt.savefig(f'result_plots_linear_interp/figure_{reaction_ind}.png')
         elif interp_type == "2":
-            plt.savefig(f'result_plots_static_interp/figure_{reaction_ind}.png')
+            plt.savefig(f'result_plots_binavg/figure_{reaction_ind}.png')
         plt.clf()
         print(f"mean: {mean}")
         print(f"std dev: {std_dev}")
