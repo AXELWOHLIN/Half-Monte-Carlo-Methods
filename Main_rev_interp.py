@@ -220,7 +220,7 @@ def central_file_decider(directory):
                 break
     return central_file
 
-def cross_section(reaction_ind, ace_file, directory):
+def cross_section(reaction_ind, ace_file, directory, interp_type):
     """Picks out the cross sections from the ACE-files. 
     Parameters: 
         reaction_dict: A dictionairy with the MT numbers as keys and the sensitivity vectors as values. 
@@ -240,12 +240,12 @@ def cross_section(reaction_ind, ace_file, directory):
         xs = data.nu_p_value
         energy_short = data.nu_t_energy
         energy = data.energy
-        xs = xs_interp(energy, energy_short, xs)
+        xs = xs_interp(energy, energy_short, xs, interp_type)
     elif reaction_ind == 452:
         xs = data.nu_t_value
         energy_short = data.nu_t_energy
         energy = data.energy
-        xs = xs_interp(energy, energy_short, xs)
+        xs = xs_interp(energy, energy_short, xs, interp_type)
     else:
         xs = data.reactions[reaction_ind].sigma
         spec_reaction = data.reactions[reaction_ind]
@@ -253,7 +253,7 @@ def cross_section(reaction_ind, ace_file, directory):
     return xs, energy
 
 
-def xs_interp(sens_energy, energy, xs):
+def xs_interp(sens_energy, energy, xs, interp_type):
     """Since the vectors are of different size we interpolate them. 
     Parameters: 
         reaction_dict: A dictionairy with the MT numbers as keys and the sensitivity vectors as values. 
@@ -262,42 +262,22 @@ def xs_interp(sens_energy, energy, xs):
     Returns:
         sens_vec_values_adjusted: A vector of the same length as the sensitivity vector. 
     """
-    xs_values_adjusted = np.interp(sens_energy, energy, xs)
-    return  xs_values_adjusted
-
-
-
-def sense_interp(reaction_dict, reaction_ind, directory,type):
-    """Since the vectors are of different size we interpolate them. 
-    Parameters: 
-        reaction_dict: A dictionairy with the MT numbers as keys and the sensitivity vectors as values. 
-        reaction_ind: An integer that corresponds to the MT number of the reaction type.
-        energy: A vector with all the energies from the chosen reaction
-    Returns:
-        sens_vec_values_adjusted: A vector of the same length as the sensitivity vector. 
-    """
-    if type == "1":
-        xs, energy = cross_section(reaction_ind, ace_file, directory)
-        sens_vector_energy, sens_vector_values = reaction_dict[reaction_ind]
-        energy *= 1e+06
-        sens_vec_values_adjusted = np.interp(sens_vector_energy,energy, xs)
-        return  sens_vec_values_adjusted
-    elif type == "2":
-        sens_vector_energy, sens_vector_values = reaction_dict[reaction_ind]
-        energy *= 1e+06
+    if interp_type == "1":
+        xs_values_adjusted = np.interp(sens_energy, energy, xs)
+    elif interp_type == "2":
         # Static hold interpolation
-        sens_vec_values_adjusted = np.zeros(len(energy))
-        for i, e in enumerate(energy):
-            idx = np.searchsorted(sens_vector_energy, e) - 1
+        xs_values_adjusted = np.zeros(len(sens_energy))
+        for i, e in enumerate(sens_energy):
+            idx = np.searchsorted(energy, e) - 1
             if idx < 0:
                 idx = 0
-            elif idx >= len(sens_vector_values):
-                idx = len(sens_vector_values) - 1
-            sens_vec_values_adjusted[i] = sens_vector_values[idx]
-        return sens_vec_values_adjusted
-    else: 
+            elif idx >= len(energy):
+                idx = len(energy) - 1
+            xs_values_adjusted[i] = xs[idx]
+    else:
         print("Syntax error, try entering 1 or 2 to choose interp_type!")
         quit()
+    return  xs_values_adjusted
 
 def ace_reader(ace_file, directory):
     """Reads the ace files. Creates a new file "new_file.ace" to write the file contents of the selected ace file.
@@ -331,13 +311,13 @@ def ace_reader(ace_file, directory):
     return file_contents
 
 def HMCcalc(reaction_dict, reaction_ind, directory, central_file, interp_type):
-    sens_vector_energy, sens_vector_values = reaction_dict[reaction_ind]
     if int(reaction_ind) == 1:
         results_vector = []
         for reaction_number in reaction_dict[reaction_ind].keys():
-            central_xs, energy = cross_section(reaction_number, central_file, directory)
+            sens_vector_energy, sens_vector_values = reaction_dict[reaction_ind][reaction_number]
+            central_xs, energy = cross_section(reaction_number, central_file, directory, interp_type)
             energy *= 1e+06
-            central_xs_values_adjusted = xs_interp(sens_vector_energy, energy, central_xs)
+            central_xs_values_adjusted = xs_interp(sens_vector_energy, energy, central_xs, interp_type)
             
 
             for file in os.scandir(directory):
@@ -345,8 +325,8 @@ def HMCcalc(reaction_dict, reaction_ind, directory, central_file, interp_type):
                 if filename==central_file:
                     continue
                 elif ".ace" in filename:
-                    xs, _ = cross_section(reaction_number, filename, directory)
-                    xs_values_adjusted = xs_interp(sens_vector_energy, energy, xs)
+                    xs, _ = cross_section(reaction_number, filename, directory, interp_type)
+                    xs_values_adjusted = xs_interp(sens_vector_energy, energy, xs, interp_type)
                     delta_k_eff = np.multiply(np.array(sens_vector_values),np.array((xs_values_adjusted.transpose()-central_xs_values_adjusted.transpose())))
                     for k in range(len(central_xs_values_adjusted.transpose())):
                         if central_xs_values_adjusted.transpose()[k]!=0:
@@ -365,17 +345,17 @@ def HMCcalc(reaction_dict, reaction_ind, directory, central_file, interp_type):
         results_vector = []
 
         sens_vector_energy, sens_vector_values = reaction_dict[reaction_ind]
-        central_xs, energy = cross_section(reaction_ind, central_file, directory)
+        central_xs, energy = cross_section(reaction_ind, central_file, directory, interp_type)
         energy *= 1e+06
-        central_xs_values_adjusted = xs_interp(sens_vector_energy, energy, central_xs)
+        central_xs_values_adjusted = xs_interp(sens_vector_energy, energy, central_xs, interp_type)
 
         for file in os.scandir(directory):
                 filename = os.fsdecode(file)
                 if filename==central_file:
                     continue
                 elif ".ace" in filename:
-                    xs, _ = cross_section(reaction_ind, filename, directory)
-                    xs_values_adjusted = xs_interp(sens_vector_energy, energy, xs)
+                    xs, _ = cross_section(reaction_ind, filename, directory, interp_type)
+                    xs_values_adjusted = xs_interp(sens_vector_energy, energy, xs, interp_type)
                     delta_k_eff = np.multiply(np.array(sens_vector_values),np.array((xs_values_adjusted.transpose()-central_xs_values_adjusted.transpose())))
                     for k in range(len(central_xs_values_adjusted.transpose())):
                         if central_xs_values_adjusted.transpose()[k]!=0:
@@ -405,6 +385,7 @@ def main():
     
     for reaction_ind in reactions_ind:
         results_vector = HMCcalc(reaction_dir, reaction_ind, directory, central_file, interp_type)
+        results_vector = np.array(results_vector)*1e+05
         mean = np.mean(results_vector)
         std_dev = np.std(results_vector)
         kurt = kurtosis(results_vector)
@@ -412,8 +393,8 @@ def main():
         plt.hist(results_vector, bins=25, density=False)
 
         # Set the plot title and axis labels
-        plt.title(f'% delta k_eff {reaction_ind}_xs')
-        plt.xlabel('% delta k_eff')
+        plt.title(f' delta k_eff (pcm) {reaction_ind}_xs')
+        plt.xlabel('delta k_eff (pcm)')
         plt.ylabel('Number of Cases')
         plt.figtext(.65, .85, f"mean = {round(mean,4)}")
         plt.figtext(.65, .8, f"std dev = {round(std_dev,4)}")
