@@ -279,40 +279,6 @@ def xs_interp(sens_energy, energy, xs, interp_type):
         quit()
     return  xs_values_adjusted
 
-
-
-def sense_interp(reaction_dict, reaction_ind, directory,type):
-    """Since the vectors are of different size we interpolate them. 
-    Parameters: 
-        reaction_dict: A dictionairy with the MT numbers as keys and the sensitivity vectors as values. 
-        reaction_ind: An integer that corresponds to the MT number of the reaction type.
-        energy: A vector with all the energies from the chosen reaction
-    Returns:
-        sens_vec_values_adjusted: A vector of the same length as the sensitivity vector. 
-    """
-    if type == "1":
-        xs, energy = cross_section(reaction_ind, ace_file, directory)
-        sens_vector_energy, sens_vector_values = reaction_dict[reaction_ind]
-        energy *= 1e+06
-        sens_vec_values_adjusted = np.interp(sens_vector_energy,energy, xs)
-        return  sens_vec_values_adjusted
-    elif type == "2":
-        sens_vector_energy, sens_vector_values = reaction_dict[reaction_ind]
-        energy *= 1e+06
-        # Static hold interpolation
-        sens_vec_values_adjusted = np.zeros(len(energy))
-        for i, e in enumerate(energy):
-            idx = np.searchsorted(sens_vector_energy, e) - 1
-            if idx < 0:
-                idx = 0
-            elif idx >= len(sens_vector_values):
-                idx = len(sens_vector_values) - 1
-            sens_vec_values_adjusted[i] = sens_vector_values[idx]
-        return sens_vec_values_adjusted
-    else: 
-        print("Syntax error, try entering 1 or 2 to choose interp_type!")
-        quit()
-
 def ace_reader(ace_file, directory):
     """Reads the ace files. Creates a new file "new_file.ace" to write the file contents of the selected ace file.
     Only files with .ace in the filename is considered. A .xsdir file is needed to determine the used element. 
