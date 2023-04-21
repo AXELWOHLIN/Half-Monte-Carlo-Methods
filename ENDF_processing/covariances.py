@@ -10,15 +10,14 @@ from IPython.display import HTML
 from tabulate import tabulate
 from pyne.endf import Library, Evaluation
 
-filename = "ENDF_processing/1_2_4_16_17_18_102.txt"
+filename = "ENDF_processing/N_ELMT2.txt"
 with open(filename, "rb") as infile:
     content = infile.read()
-    with open("ENDF_processing/covar_test.bin", "rb") as outfile:
-        #outfile.write(content)
-        endfds = Evaluation(outfile)
-        majd = endfds.read( reactions = (30,2))
-        mike = endfds.read( reactions = (1,451))
-
-
-print(majd)
-print(mike)
+    with open("ENDF_processing/covar_test.bin", "wb") as outfile:
+        outfile.write(content)
+        with open("ENDF_processing/covar_test.bin", "rb") as outfile:
+            #outfile.write(content)      
+            endfds = Evaluation(outfile)
+            print(endfds.target)
+            print(endfds.reaction_list)
+            print(endfds.read(reactions=(33,2)))
