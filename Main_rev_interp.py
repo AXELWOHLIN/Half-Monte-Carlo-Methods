@@ -21,11 +21,13 @@ def ace_directory(dir=0):
     """
     if dir==0:
         try:
+            #Makes a Tkinter windows so a directory can be chosen
             root = Tk()
             root.withdraw()
             directory = filedialog.askdirectory()
             print("Selected directory: ", directory)
         except:
+            #If Tkinter does not work, write directory as string
             print("Tkinter is not available. Please enter the directory path manually:")
             directory = input()
         return directory
