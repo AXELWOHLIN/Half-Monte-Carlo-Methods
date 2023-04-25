@@ -28,6 +28,7 @@
             The total reaction is not calculated as the others but is instead a summation of a 
 
         For example a terminal can look like this:
+        ```
             Choose a reaction:
                 1. n,2n
                 2. n,3n
@@ -45,6 +46,6 @@
                 Please choose a sensitivity vector in .csv format:
                 Do you want to add another reaction? [y/n]: n
                 Do you want to choose central file? [y/n]: n
-
+        ```
 
 We hope this repository is useful and
