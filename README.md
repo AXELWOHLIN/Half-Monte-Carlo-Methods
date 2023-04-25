@@ -15,12 +15,15 @@ the same library the script will still be able to produce a result when they are
 # Scripts:
 ## bin_sol.py:
 The python script used for the calculation of the error propagation is "bin_sol.py". To run the script properly a suitable collection of ace randomfiles and
-sensitivity vectors corresponding to the desired reaction is required. The script when run will open a window and prompt the user to select a directory where
-the utilized randomfiles are. It will then propose a list of reactions, whereas the last option is to manually add a reaction. The so called "other" option
-in the reaction list will print an error message if the entered reaction is not included in the given ace randomfiles. The user is then required to either
-propose corresponding sensivity vector for the reaction in the shape of either a csvfile or a textfile generated from dice where the script wants the total
-sensitivity within bin. After the user is given a option to add further reactions in the same run which will be formatted the same way as previous additions.
-Finally the user is given the option to manually select the central ace file otherwise the first file in the directory will be automatically selected. 
+sensitivity vectors corresponding to the desired reaction is required.
+1. The script when run will open a window and prompt the user to select a directory where
+the utilized randomfiles are.
+2. It will then propose a list of reactions, whereas the last option is to manually add a reaction. The so called "other" option
+in the reaction list will print an error message if the entered reaction is not included in the given ace randomfiles.
+3. The user is then required to either propose corresponding sensivity vector for the reaction in the shape of either a csvfile or a textfile generated from
+dice where the script wants the total sensitivity within bin.
+4. After the user is given a option to add further reactions in the same run which will be formatted the same way as previous additions.
+5. Finally the user is given the option to manually select the central ace file otherwise the first file in the directory will be automatically selected.
 
 In the case of total:
 The total reaction is not calculated as the others but is instead a summation of a 
