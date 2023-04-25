@@ -25,7 +25,8 @@ Finally the user is given the option to manually select the central ace file oth
 In the case of total:
 The total reaction is not calculated as the others but is instead a summation of a 
 
-For example a terminal can look like this:
+### Example:
+To calculate the error propagation for fission the terminal can look like this:
 ```
 Choose a reaction:
 1. n,2n
@@ -45,6 +46,14 @@ Please choose a sensitivity vector in .csv format:
 Do you want to add another reaction? [y/n]: n
 Do you want to choose central file? [y/n]: n
 ```
-
+After a brief calculation the script will produce an output:
+```
+mean: 2.0078138155942216
+std dev: 264.73216695302557
+skewness: 0.060316093916077784
+kurtosis: -0.10883104489764595
+```
+The script will also produce a graph:
+![Graph for delta_k_eff in pcm for each randomfile](results_plots_binavg/figure_4.png)
 # Conclusion:
 We hope this repository is useful and
