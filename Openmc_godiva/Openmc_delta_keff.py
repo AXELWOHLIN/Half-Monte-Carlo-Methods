@@ -21,22 +21,34 @@ mean = np.mean(delta_keff)
 kurt = kurtosis(delta_keff)
 skewness = skew(delta_keff)
 
-std_dev2 = np.std(delta_keff)
-mean2 = np.mean(delta_keff)
-kurt2 = kurtosis(delta_keff)
-skewness2 = skew(delta_keff)
+std_dev2 = np.std(uncert)
+mean2 = np.mean(uncert)
+kurt2 = kurtosis(uncert)
+skewness2 = skew(uncert)
 
 
 
 plt.hist(delta_keff, bins=25, density=False)
 
 # Set the plot title and axis labels
-plt.title(f'% delta k_eff total monte carlo')
-plt.xlabel('% delta k_eff')
+plt.title(f'delta k_eff total monte carlo')
+plt.xlabel('delta k_eff')
 plt.ylabel('Number of Cases')
 plt.figtext(.65, .85, f"mean = {round(mean,4)}")
 plt.figtext(.65, .8, f"std dev = {round(std_dev,4)}")
 plt.figtext(.65, .75, f"kurtosis = {round(kurt,4)}")
 plt.figtext(.65, .7, f"skewness = {round(skewness,4)}")
-plt.savefig('Openmc_hist.png')
+plt.savefig('Openmc_delta_keff.png')
+plt.clf()
+
+plt.hist(uncert, bins=25, density=False)
+
+plt.title(f"OpenMC's statistical uncertainty")
+plt.xlabel('Statistical uncertainty')
+plt.ylabel('Number of Cases')
+plt.figtext(.65, .85, f"mean = {round(mean2,4)}")
+plt.figtext(.65, .8, f"std dev = {round(std_dev2,4)}")
+plt.figtext(.65, .75, f"kurtosis = {round(kurt2,4)}")
+plt.figtext(.65, .7, f"skewness = {round(skewness2,4)}")
+plt.savefig('Openmc_stat_uncert.png')
 plt.clf()
