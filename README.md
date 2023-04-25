@@ -54,6 +54,6 @@ skewness: 0.060316093916077784
 kurtosis: -0.10883104489764595
 ```
 The script will also produce a graph:
-![Graph for delta_k_eff in pcm for each randomfile](results_plots_binavg/figure_4.png)
+![Graph for delta_k_eff in pcm for each randomfile](result_plots_binavg/figure_4.png)
 # Conclusion:
 We hope this repository is useful and
