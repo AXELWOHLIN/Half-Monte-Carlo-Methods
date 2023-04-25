@@ -63,7 +63,7 @@ def choose_csv(reaction_ind):
         sens_vector_energy, sens_vector_values = reaction_dict[str(reaction_ind)]
     return sens_vector_energy, sens_vector_values
 
-def total_reactions_txt():
+def total_reactions_txt(directory):
     """
     Creates a dictionary of sensitivity vectors by fetching data from a Dice texftile. The textfile is read with the help
     of a list of reactions.
@@ -89,7 +89,14 @@ def total_reactions_txt():
 
     energy_vector = np.array(energy_vector)
 
-    first_word = '92235'
+    for entry in os.scandir(directory):
+        if entry.is_file() and ".xsdir" in entry.name:
+            dir_file = entry.path
+            break
+    with open(dir_file) as f:
+        first_line = f.readline()
+        first_word = first_line.split('.')[0]
+
     sensitivity_dict = {}
     for reaction_ind, reaction_name  in name_dict.items():
         sens_vec = []
@@ -196,8 +203,8 @@ def add_reactions(directory):
     while choice == "y":
         reaction_ind = choose_reaction(directory)
         if int(reaction_ind) == 1:
-            print("Do you want to specifiy a sensitivity vector for each cross section (.csv) [1] or \
-              have it be automatically generated from a DICE text file (.txt)? [2] \n")
+            print("Do you want to specifiy a sensitivity vector for each cross section (.csv) [1] or " \
+            "have it be automatically generated from a DICE text file (.txt)? [2] \n")
             total_meth = input("Enter 1 or 2: ")
             while total_meth not in ["1","2"]:
                 print("Incorrect usage, please specify '1' or '2'")
@@ -205,7 +212,7 @@ def add_reactions(directory):
             if total_meth == "1":
                 total_dictionary = total_reactions_csv(directory) 
             elif total_meth == "2":
-                total_dictionary = total_reactions_txt() 
+                total_dictionary = total_reactions_txt(directory) 
                 reaction_dict[reaction_ind] = total_dictionary
         else:
             sens_vector_energy, sens_vector_values = choose_csv(reaction_ind)
