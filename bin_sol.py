@@ -10,7 +10,8 @@ from scipy.stats import skew
 from scipy.stats import norm, kurtosis
 
 def ace_directory(dir=0):
-    """Creates a Tkinter root window and prompts the user to choose a directory with ace-files. 
+    """
+    Creates a Tkinter root window and prompts the user to choose a directory with ace-files. 
     Parameters: 
         dir=0: Automatically jumps to "Choose a suitable directory with ace files"
     Returns:
@@ -31,7 +32,8 @@ def ace_directory(dir=0):
     return directory
 
 def choose_csv(reaction_ind):
-    """Prompts the user to either choose a sensitivity vector by creating a Tkinter root window or fetch a sensiivity vector
+    """
+    Prompts the user to either choose a sensitivity vector by creating a Tkinter root window or fetch a sensiivity vector
     from a specified textfile generated with Dice. The sensitivity vectors is then saved in one vector with energies and one
     with the corresponding values. The left column in your csv file should contain energies in MeV and your right column the
     sensitivity vector values.  
@@ -62,7 +64,8 @@ def choose_csv(reaction_ind):
     return sens_vector_energy, sens_vector_values
 
 def total_reactions_txt():
-    """Creates a dictionary of sensitivity vectors by fetching data from a Dice texftile. The textfile is read with the help
+    """
+    Creates a dictionary of sensitivity vectors by fetching data from a Dice texftile. The textfile is read with the help
     of a list of reactions.
     Parameters: 
         none
@@ -108,7 +111,8 @@ def total_reactions_txt():
     return sensitivity_dict
 
 def total_reactions_csv(directory):
-    """Creates a dictionary containing sensitivity vectors specified through a tkinter prompt window where a csv file is selected. 
+    """
+    Creates a dictionary containing sensitivity vectors specified through a tkinter prompt window where a csv file is selected. 
     This dictionary represents the reactions which accumulate to the total sensitivity vector. 
     Parameters: 
         directory: A string with the name of the chosen directory of the ace files.
@@ -128,7 +132,8 @@ def total_reactions_csv(directory):
     return total_dict
 
 def choose_reaction(directory):
-    """Prompts the user to choose a reaction by presenting a series of reactions. The user chooses reaction 
+    """
+    Prompts the user to choose a reaction by presenting a series of reactions. The user chooses reaction 
     by typing the corresponding number. It then returns the MT number that corresponds to this reaction. 
     Parameters: 
         directory: A string with the name of the chosen directory of the ace files.
@@ -179,7 +184,8 @@ def check_mt(directory, reaction_ind):
     return 
 
 def add_reactions(directory):
-    """Gives the user the alternative to add a reaction to the calculations. 
+    """
+    Gives the user the alternative to add a reaction to the calculations. 
     Parameters: 
         directory: A string with the name of the chosen directory of the ace files.
     Returns:
@@ -208,7 +214,8 @@ def add_reactions(directory):
     return reaction_dict
 
 def central_file_decider(directory):
-    """Decides which file to use as central file. 
+    """
+    Decides which file to use as central file. 
     Parameters: 
         directory: A string with the name of the chosen directory of the ace files.
     Returns:
@@ -235,7 +242,8 @@ def central_file_decider(directory):
     return central_file
 
 def cross_section(reaction_ind, ace_file, directory):
-    """Picks out the cross sections from the ACE-files and it's corresponding energy vector. 
+    """
+    Fetches the cross sections from the ACE-files and it's corresponding energy vector. 
     Parameters:  
         reaction_ind: An integer that corresponds to the MT number of the reaction type.
         ace_file: A string with the name of the specific ACE-file.
@@ -262,7 +270,8 @@ def cross_section(reaction_ind, ace_file, directory):
     return xs, energy
 
 def ace_reader(ace_file, directory):
-    """Reads the ace files. Creates a new file "new_file.ace" to write the file contents of the selected ace file.
+    """
+    Reads the ace files. Creates a new file "new_file.ace" to write the file contents of the selected ace file.
     Only files with .ace in the filename is considered. A .xsdir file is needed to determine the used element. 
     Parameters: 
         ace_file: A string with the name of the specific ACE-file.
@@ -293,7 +302,8 @@ def ace_reader(ace_file, directory):
     return file_contents
 
 def HMCcalc(reaction_dict, reaction_ind, directory, central_file):
-    """Calculates the difference in cross section between central and random file for specified reaction. The difference
+    """
+    Calculates the difference in cross section between central and random file for specified reaction. The difference
     is then accumulated for each bin in the sensitivity vectors energy spectrum and multiplied with the total sensitivity
     within each bin.The solution is then returned as a vector where each element represents each file difference in pcm.
     Parameters: 
@@ -358,8 +368,9 @@ def HMCcalc(reaction_dict, reaction_ind, directory, central_file):
     return results_vector
 
 def bin_averager(xs, xs_energy, sens_energy):
-    """Computes the average cross section from vectors of cross section and corresponding energy value by
-    . 
+    """
+    Computes the average cross section from vectors of cross section and corresponding energy value with
+    the energy bins defined by the sensitivity energy vector.
     Parameters: 
         xs: A vector with all the cross-sections from the chosen reaction.
         xs_energy: A vector of energy values corresponding to each cross section.
