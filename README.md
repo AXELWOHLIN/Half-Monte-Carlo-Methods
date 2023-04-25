@@ -2,17 +2,15 @@
 
 ## Introduction:
 
-    This repository is a bachelors project with a aim to produce a generalized python script able to compute Half Monte Carlo calculation for error propagation of 
-    criticality in integral experiments. The Half Monte Carlo calculation is done with a combination of sensitivity vectors preferrably given by the Dice library 
-    and a suitable collection of randomfiles in ace format. Although the results will stand more correct when the sensitivity vector and randomfiles come from
-    the same library the script will still be able to produce a result when they are not.
+This repository is a bachelors project with a aim to produce a generalized python script able to compute Half Monte Carlo calculation for error propagation of 
+criticality in integral experiments. The Half Monte Carlo calculation is done with a combination of sensitivity vectors preferrably given by the Dice library 
+and a suitable collection of randomfiles in ace format. Although the results will stand more correct when the sensitivity vector and randomfiles come from
+the same library the script will still be able to produce a result when they are not.
 
 
 ## Installations:
-
-    If you want to use the files using ENDFtk for ENDF file processing, see here for an installation tutorial: https://github.com/njoy/ENDFtk/blob/master/README.md
-
-    The scripts found in this repository have an requirement of the pyne module which installation instructions can be found on the pyne website: https://pyne.io/
+* If you want to use the files using ENDFtk for ENDF file processing, see here for an installation tutorial: https://github.com/njoy/ENDFtk/blob/master/README.md
+* The scripts found in this repository have an requirement of the pyne module which installation instructions can be found on the pyne website: https://pyne.io/
 
 ## Scripts:
     # bin_sol.py:
