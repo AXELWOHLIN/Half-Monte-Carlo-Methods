@@ -15,9 +15,8 @@ with open(filename, "rb") as infile:
     content = infile.read()
     with open("ENDF_processing/covar_test.bin", "wb") as outfile:
         outfile.write(content)
-        with open("ENDF_processing/covar_test.bin", "rb") as outfile:
-            #outfile.write(content)      
+        with open("ENDF_processing/covar_test.bin", "rb") as outfile:    
             endfds = Evaluation(outfile)
             print(endfds.target)
             print(endfds.reaction_list)
-            print(endfds.read(reactions=(33,2)))
+            print(endfds.read(reactions=[(33,2)]))
