@@ -43,7 +43,7 @@ plt.clf()
 
 plt.hist(uncert, bins=25, density=False)
 
-plt.title(f"OpenMC's statistical uncertainty (pcm)")
+plt.title(f"OpenMC's statistical uncertainty (pcm) [+,-]")
 plt.xlabel('Statistical uncertainty (pcm)')
 plt.ylabel('Number of Cases')
 plt.figtext(.65, .85, f"mean = {round(mean2,4)}")
