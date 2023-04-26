@@ -410,8 +410,6 @@ def main():
     reactions_ind = list(reaction_dir.keys())
     central_file=central_file_decider(directory)
 
-    name_dict = {16: "n,2n", 17:"n,3n", 37:"n,4n", 18:"fission", 2:"elastic" \
-                 ,4:"inelastic", 102:"n,gamma", 1: "total", 456:"prompt,nubar", 452:"nubar"}
     for reaction_ind in reactions_ind:
         results_vector = HMCcalc(reaction_dir, reaction_ind, directory, central_file)
         mean = np.mean(results_vector)
@@ -421,7 +419,7 @@ def main():
         plt.hist(results_vector, bins=25, density=False)
 
         # Set the plot title and axis labels
-        plt.title(r'$\Delta$ $k_{{eff}}$ ' + f' {name_dict[reaction_ind]}')
+        plt.title(r'$\Delta$ $k_{{eff}}$ ' + f' {reaction_ind}')
         plt.xlabel(r'$\Delta$ $k_{{eff}}$ (pcm)')
         plt.ylabel('Number of Cases')
         plt.figtext(.65, .85, f"mean = {round(mean,4)}")
@@ -429,7 +427,7 @@ def main():
         plt.figtext(.65, .75, f"kurtosis = {round(kurt,4)}")
         plt.figtext(.65, .7, f"skewness = {round(skewness,4)}")
 
-        plt.savefig(f'result_plots_binavg/figure_{name_dict[reaction_ind]}_deltakeff.png')
+        plt.savefig(f'result_plots_binavg/figure_{reaction_ind}_deltakeff.png')
         plt.clf()
         print(f"mean: {mean}")
         print(f"std dev: {std_dev}")
