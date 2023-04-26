@@ -1,6 +1,7 @@
 import os
 import matplotlib.pyplot as plt
 import pyne.ace
+import pyne.rxname as rx
 import numpy as np
 from pyne.rxname import *
 from tkinter import Tk
@@ -31,7 +32,7 @@ def ace_directory(dir=0):
         directory = dir
     return directory
 
-def choose_csv(reaction_ind):
+def choose_csv(reaction_ind, directory):
     """
     Prompts the user to either choose a sensitivity vector by creating a Tkinter root window or fetch a sensiivity vector
     from a specified textfile generated with Dice. The sensitivity vectors is then saved in one vector with energies and one
@@ -59,7 +60,7 @@ def choose_csv(reaction_ind):
         sens_vector_energy = data[:, 0]
         sens_vector_values = data[:, 1]
     elif int(choice) == 2:
-        reaction_dict = total_reactions_txt()
+        reaction_dict = total_reactions_txt(directory)
         sens_vector_energy, sens_vector_values = reaction_dict[str(reaction_ind)]
     return sens_vector_energy, sens_vector_values
 
@@ -215,7 +216,7 @@ def add_reactions(directory):
                 total_dictionary = total_reactions_txt(directory) 
                 reaction_dict[reaction_ind] = total_dictionary
         else:
-            sens_vector_energy, sens_vector_values = choose_csv(reaction_ind)
+            sens_vector_energy, sens_vector_values = choose_csv(reaction_ind, directory)
             reaction_dict[reaction_ind] = [sens_vector_energy, sens_vector_values]
         choice = input("Do you want to add another reaction? [y/n]: ")
     return reaction_dict
@@ -408,7 +409,7 @@ def main():
     reaction_dir = add_reactions(directory)
     reactions_ind = list(reaction_dir.keys())
     central_file=central_file_decider(directory)
-    
+
     for reaction_ind in reactions_ind:
         results_vector = HMCcalc(reaction_dir, reaction_ind, directory, central_file)
         mean = np.mean(results_vector)
@@ -418,15 +419,15 @@ def main():
         plt.hist(results_vector, bins=25, density=False)
 
         # Set the plot title and axis labels
-        plt.title(f'% delta k_eff {reaction_ind}_xs')
-        plt.xlabel('% delta k_eff')
+        plt.title(r'$\Delta$ $k_{{eff}}$ ' + f' {reaction_ind}')
+        plt.xlabel(r'$\Delta$ $k_{{eff}}$ (pcm)')
         plt.ylabel('Number of Cases')
         plt.figtext(.65, .85, f"mean = {round(mean,4)}")
         plt.figtext(.65, .8, f"std dev = {round(std_dev,4)}")
         plt.figtext(.65, .75, f"kurtosis = {round(kurt,4)}")
         plt.figtext(.65, .7, f"skewness = {round(skewness,4)}")
 
-        plt.savefig(f'result_plots_binavg/figure_{reaction_ind}.png')
+        plt.savefig(f'result_plots_binavg/figure_{reaction_ind}_deltakeff.png')
         plt.clf()
         print(f"mean: {mean}")
         print(f"std dev: {std_dev}")
