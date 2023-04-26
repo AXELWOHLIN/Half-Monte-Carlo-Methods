@@ -1,5 +1,7 @@
 import os
 import matplotlib.pyplot as plt
+from matplotlib.ticker import LogLocator, MaxNLocator
+import matplotlib.ticker as ticker
 import pyne.ace
 import requests
 import numpy as np
@@ -15,7 +17,6 @@ from scipy.stats import norm, kurtosis
 
 
 directory = 'U235.nuss.10.10.2016'
-
 
 def cross_section(reaction_ind, ace_file, directory):
     """Picks out the cross sections from the ACE-files. 
@@ -77,8 +78,9 @@ def ace_reader(ace_file, directory):
 
 
 name_dict = {"n,2n":(16),"n,3n":(17),"n,4n":(37) \
-               ,"fission":(18), "elastic":(2) \
-                  ,"inelastic":(4), "n,gamma":(102) ,"total":(1), "promt,nubar":(456), "nubar":(452)}
+            ,"fission":(18), "elastic":(2) \
+                 ,"inelastic":(4), "n,gamma":(102) ,"total":(1), "promt,nubar":(456), "nubar":(452)}
+
 
 
 name_list = []
@@ -104,17 +106,24 @@ for reaction_ind in name_dict.values():
 
 
 for dict_key in plot_dict.keys():
+    print(dict_key)
     fig, axs = plt.subplots()
     # Step 3: Loop through the files in each set and plot the vectors on the corresponding subplot
     for i in plot_dict[dict_key].keys():
         y, x = plot_dict[dict_key][i]
+        x *= 1e+06
         axs.loglog(x, y)  # plot the vector and add a label
     
     # Step 4: Customize the subplots
-    axs.set_title(f'Cross section plot:{name_list[dict_key]}')
-    axs.set_xlabel("Energy")
-    axs.set_ylabel("Cross Section")
-    plt.savefig(f'cross_section_plots/figure_{name_list[dict_key]}.png')
+    if dict_key == 1 or 2:
+        axs.set_xticks([], minor=True)
+        axs.xaxis.set_major_locator(plt.MaxNLocator(5))
+    axs.set_title(f'{name_list[dict_key]}')
+    axs.set_xlabel("Energy(MeV)")
+    axs.set_ylabel("Cross section(Barn)")
 
-if os.path.exists('new_file.ace'):
+
+    plt.savefig(f'cross_section_plots/figure_{name_list[dict_key]}.png')
+    plt.clf
+if os.path.exists('new_file.ace'):  
     os.remove('new_file.ace')
