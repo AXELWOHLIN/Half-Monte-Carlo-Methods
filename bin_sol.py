@@ -73,7 +73,7 @@ def total_reactions_txt(directory):
     Returns:
         sensitivity_dict: A dictionary containing sensitivity vectors with a corresponding energy vectors for each reaction.
     """
-    name_dict = {'2':'elastic', '4':'inelastic', '16':'n,2n', '17':'n,3n', '18':'fission','452':'nubar','456':'prompt,nu', '102':'n,gamma', '37':'n,4n'}
+    name_dict = {'2':'elastic', '4':'inelastic', '16':'n,2n', '17':'n,3n', '18':'fission','452':'nubar','456':'prompt,chi', '102':'n,gamma', '37':'n,4n'}
     energy_vector = []
 
     with open('csv_files/HEU-MET-FAST-001-001_MCNP_ENDF-B-VII.0-Continuous_SENS.txt') as f:
@@ -134,7 +134,7 @@ def total_reactions_csv(directory):
             total directory \n")
     while choice == "y":
         reaction_ind = choose_reaction(directory)
-        sens_vector_energy, sens_vector_values = choose_csv()
+        sens_vector_energy, sens_vector_values = choose_csv(reaction_ind, directory)
         total_dict[reaction_ind] = (sens_vector_energy, sens_vector_values)
         choice = input("Do you have more sensitivity vectors to add? [y/n]: ")
     return total_dict
@@ -211,7 +211,8 @@ def add_reactions(directory):
                 print("Incorrect usage, please specify '1' or '2'")
                 total_meth = input("Enter 1 or 2: ")
             if total_meth == "1":
-                total_dictionary = total_reactions_csv(directory) 
+                total_dictionary = total_reactions_csv(directory)
+                reaction_dict[reaction_ind] = total_dictionary 
             elif total_meth == "2":
                 total_dictionary = total_reactions_txt(directory) 
                 reaction_dict[reaction_ind] = total_dictionary
