@@ -73,7 +73,7 @@ def total_reactions_txt(directory):
     Returns:
         sensitivity_dict: A dictionary containing sensitivity vectors with a corresponding energy vectors for each reaction.
     """
-    name_dict = {'2':'elastic', '4':'inelastic', '16':'n,2n', '17':'n,3n', '18':'fission','452':'nubar','456':'prompt,chi', '102':'n,gamma', '37':'n,4n'}
+    name_dict = {'2':'elastic', '4':'inelastic', '16':'n,2n', '17':'n,3n', '18':'fission','452':'chi','456':'prompt,chi', '102':'n,gamma', '37':'n,4n'}
     energy_vector = []
 
     with open('csv_files/HEU-MET-FAST-001-001_MCNP_ENDF-B-VII.0-Continuous_SENS.txt') as f:
@@ -91,7 +91,7 @@ def total_reactions_txt(directory):
     energy_vector = np.array(energy_vector)
 
     for entry in os.scandir(directory):
-        if entry.is_file() and ".xsdir" in entry.name:
+        if entry.is_file() and ".ace" in entry.name:
             dir_file = entry.path
             break
     with open(dir_file) as f:
@@ -297,7 +297,7 @@ def ace_reader(ace_file, directory):
     lib = pyne.ace.Library('new_file.ace')
     
     for entry in os.scandir(directory):
-            if entry.is_file() and ".xsdir" in entry.name:
+            if entry.is_file() and ".ace" in entry.name:
                 dir_file = entry.path
                 break
     with open(dir_file) as f:
@@ -405,8 +405,8 @@ def bin_averager(xs, xs_energy, sens_energy):
     return bin_avg
 
 def main():
-    directory = 'U235.nuss.10.10.2016'
-    directory = ace_directory(directory)
+    #directory = 'U235.nuss.10.10.2016'
+    directory = ace_directory()
     reaction_dir = add_reactions(directory)
     reactions_ind = list(reaction_dir.keys())
     central_file=central_file_decider(directory)

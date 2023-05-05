@@ -34,6 +34,7 @@ def cross_section(reaction_ind, ace_file, directory):
     if reaction_ind == 1:
         xs = data.sigma_t
         energy = data.energy
+        print(len(energy))
     elif reaction_ind == 456:
         xs = data.nu_p_value
         energy = data.nu_p_energy
@@ -64,7 +65,7 @@ def ace_reader(ace_file, directory):
         outfile.write(ace_file_contents)
     lib = pyne.ace.Library('new_file.ace')
     for entry in os.scandir(directory):
-            if entry.is_file() and ".xsdir" in entry.name:
+            if entry.is_file() and ".ace" in entry.name:
                 dir_file = entry.path
                 break
     with open(dir_file) as f:
@@ -80,8 +81,10 @@ def ace_reader(ace_file, directory):
 #name_dict = {"n,2n":(16),"n,3n":(17),"n,4n":(37) \
 #            ,"fission":(18), "elastic":(2) \
 #                 ,"inelastic":(4), "n,gamma":(102) ,"total":(1), "promt,nubar":(456), "nubar":(452)}
-name_dict = {"n,2n":(16),"n,3n":(17),"n,4n":(37)}
-
+#name_dict = {"n,2n":(16),"n,3n":(17),"n,4n":(37)}
+#name_dict = {"fission":(18), "elastic":(2),"inelastic":(4), "n,gamma":(102)}
+#name_dict = {"total":(1), "promt,nubar":(456), "nubar":(452)}
+name_dict = {"total":(1)}
 
 name_list = []
 for i in name_dict.keys():
@@ -123,7 +126,7 @@ for dict_key in plot_dict.keys():
     axs.set_ylabel("Cross section(Barn)")
 
 
-    plt.savefig(f'cross_section_plots/figure_{name_list[dict_key]}.png')
+    plt.savefig(f'new_cross_section_plots/figure_{name_list[dict_key]}.png')
     plt.clf
 if os.path.exists('new_file.ace'):  
     os.remove('new_file.ace')
