@@ -420,7 +420,7 @@ def main():
         plt.hist(results_vector, bins=25, density=False)
 
         # Set the plot title and axis labels
-        plt.title(r'$\Delta$ $k_{{eff}}$ ' + f' {reaction_ind}')
+        plt.title(r'$\Delta$ $k_{{eff}}$ ' + f'prompt,nubar')
         plt.xlabel(r'$\Delta$ $k_{{eff}}$ (pcm)')
         plt.ylabel('Number of Cases')
         plt.figtext(.65, .85, f"mean = {round(mean,4)}")
@@ -428,7 +428,7 @@ def main():
         plt.figtext(.65, .75, f"kurtosis = {round(kurt,4)}")
         plt.figtext(.65, .7, f"skewness = {round(skewness,4)}")
 
-        plt.savefig(f'result_plots_binavg/figure_{reaction_ind}_deltakeff.png')
+        plt.savefig(f'result_plots_binavg/figure_prompt,nubar_deltakeff.png')
         plt.clf()
         print(f"mean: {mean}")
         print(f"std dev: {std_dev}")
