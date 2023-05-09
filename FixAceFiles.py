@@ -1,7 +1,7 @@
 import os
 
 ace_files=[]
-dir_ace='/home/rfp/kand/u235.nuss.30.04.2023/'
+dir_ace='u235.nuss.30.04.2023/'
 
 os.chdir(dir_ace)
 for entry in os.scandir('.'):
