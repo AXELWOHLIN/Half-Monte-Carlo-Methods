@@ -110,7 +110,9 @@ def total_reactions_txt(directory):
             header_found = False
             for line in f:
                 if first_word in line and reaction_name in line:
-                    header_found = True
+                    next_line = next(f, None)
+                    if next_line.split()[0]=='0':
+                        header_found = True
                     continue
                 else:
                     if header_found == True and line.startswith(' '):
