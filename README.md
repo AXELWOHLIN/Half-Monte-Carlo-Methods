@@ -62,3 +62,5 @@ The script will also produce a graph:
 ![Graph for delta_k_eff in pcm for each randomfile](result_plots_binavg/figure_4.png)
 # Conclusion:
 We hope this readme.md and the scripts found in the repository will be useful. Thank you.
+
+TYRA hellooo
