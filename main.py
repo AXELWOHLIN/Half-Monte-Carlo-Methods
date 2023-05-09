@@ -180,7 +180,6 @@ def choose_reaction(directory, tot=0):
         reaction_ind= int(name_dict[chosen_key])
         return reaction_ind
 
-
 def check_mt(directory, reaction_ind):
     """
     Checks if the MT number is valid and exists in the ace files.
