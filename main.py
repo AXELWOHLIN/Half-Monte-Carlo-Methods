@@ -416,11 +416,12 @@ def bin_averager(xs, xs_energy, sens_energy):
     return bin_avg
 
 def main():
-    #directory = 'U235.nuss.10.10.2016'
+    print("Please select directory for the ACE-files: ")
     directory = ace_directory()
     reaction_dir = add_reactions(directory)
     reactions_ind = list(reaction_dir.keys())
     central_file=central_file_decider(directory)
+    results_dir = 'results/results_majd'
 
     for reaction_ind in reactions_ind:
         results_vector = HMCcalc(reaction_dir, reaction_ind, directory, central_file)
@@ -439,7 +440,7 @@ def main():
         plt.figtext(.65, .75, f"kurtosis = {round(kurt,4)}")
         plt.figtext(.65, .7, f"skewness = {round(skewness,4)}")
 
-        plt.savefig(f'result_plots_binavg/figure_prompt,nubar_deltakeff.png')
+        plt.savefig(results_dir+'/figure_prompt,nubar_deltakeff.png')
         plt.clf()
         print(f"mean: {mean}")
         print(f"std dev: {std_dev}")
