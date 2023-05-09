@@ -75,8 +75,13 @@ def total_reactions_txt(directory):
     """
     name_dict = {'2':'elastic', '4':'inelastic', '16':'n,2n', '17':'n,3n', '18':'fission','452':'chi','456':'prompt,chi', '102':'n,gamma', '37':'n,4n'}
     energy_vector = []
-
-    with open('csv_files/HEU-MET-FAST-001-001_MCNP_ENDF-B-VII.0-Continuous_SENS.txt') as f:
+    print("\nPlease choose a suitable Dice text file of sensitivity vectors:")
+    root = Tk()
+    # Hide the main window
+    root.withdraw()
+    # ask the user to select a file using the filedialog
+    text_file_path = filedialog.askopenfilename()
+    with open(text_file_path) as f:
         header_found = False
         for line in f:
             if 'energy' in line:
@@ -101,7 +106,7 @@ def total_reactions_txt(directory):
     sensitivity_dict = {}
     for reaction_ind, reaction_name  in name_dict.items():
         sens_vec = []
-        with open('csv_files/HEU-MET-FAST-001-001_MCNP_ENDF-B-VII.0-Continuous_SENS.txt') as f:
+        with open(text_file_path) as f:
             header_found = False
             for line in f:
                 if first_word in line and reaction_name in line:
@@ -133,13 +138,13 @@ def total_reactions_csv(directory):
         with their corresponding sensitivity vectors in .csv format to create the \
             total directory \n")
     while choice == "y":
-        reaction_ind = choose_reaction(directory)
+        reaction_ind = choose_reaction(directory, 1)
         sens_vector_energy, sens_vector_values = choose_csv(reaction_ind, directory)
         total_dict[reaction_ind] = (sens_vector_energy, sens_vector_values)
         choice = input("Do you have more sensitivity vectors to add? [y/n]: ")
     return total_dict
 
-def choose_reaction(directory):
+def choose_reaction(directory, tot=0):
     """
     Prompts the user to choose a reaction by presenting a series of reactions. The user chooses reaction 
     by typing the corresponding number. It then returns the MT number that corresponds to this reaction. 
@@ -148,11 +153,16 @@ def choose_reaction(directory):
     Returns:
         reaction_ind: An integer that corresponds to the MT number of the reaction type.
     """
-    #Dictionary of common reactions and the corresponding MT numbers, other can be chosen to use another reaction
-    name_dict = {"n,2n":(16),"n,3n":(17),"n,4n":(37) \
-                    ,"fission":(18), "elastic":(2) \
-                        ,"inelastic":(4), "n,gamma":(102), "prompt,nu":(456), "nubar":(452), "total":(1),"other":("other")}
-
+    if tot==0:
+        #Dictionary of common reactions and the corresponding MT numbers, other can be chosen to use another reaction
+        name_dict = {"n,2n":(16),"n,3n":(17),"n,4n":(37) \
+                        ,"fission":(18), "elastic":(2) \
+                            ,"inelastic":(4), "n,gamma":(102), "prompt,nu":(456), "nubar":(452), "total":(1),"other":("other")}
+    else:
+        #Dictionary of common reactions and the corresponding MT numbers, other can be chosen to use another reaction
+        name_dict = {"n,2n":(16),"n,3n":(17),"n,4n":(37) \
+                        ,"fission":(18), "elastic":(2) \
+                            ,"inelastic":(4), "n,gamma":(102), "prompt,nu":(456), "nubar":(452),"other":("other")}
     # list all the keys in name_dict
     keys = list(name_dict.keys())
 
@@ -160,15 +170,16 @@ def choose_reaction(directory):
     print("Choose a reaction:")
     for i, key in enumerate(keys):
         print(f"{i+1}. {key}")
-    choice = input("Enter the number of the reaction: ")
-    if choice == "11":
+    choice = int(input("Enter the number of the reaction: "))
+    if choice == len(name_dict):
         reaction_ind = int(input("Enter the MT number of your desired reaction: "))
         check_mt(directory, reaction_ind) #checks if valid MT number
     else:
     # get the corresponding value based on the user's choice
-        chosen_key = keys[int(choice)-1]
+        chosen_key = keys[choice-1]
         reaction_ind= int(name_dict[chosen_key])
         return reaction_ind
+
 
 def check_mt(directory, reaction_ind):
     """

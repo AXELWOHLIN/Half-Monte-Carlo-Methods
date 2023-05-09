@@ -10,11 +10,15 @@ the same library the script will still be able to produce a result when they are
 # Installations:
 * If you want to use the files using ENDFtk for ENDF file processing, see here for an installation tutorial: https://github.com/njoy/ENDFtk/blob/master/README.md
 * The scripts found in this repository have an requirement of the PyNE module which installation instructions can be found on the pyne website: https://pyne.io/
+* If you want to run total Monte Carlo simulations using the scripts in the repository you need to install OpenMC.
+Installation tutorial can be found ħere: https://docs.openmc.org/en/stable/quickinstall.html
 
 # Scripts:
 ## bin_sol.py:
-The python script used for the calculation of the error propagation is "bin_sol.py". To run the script properly a suitable collection of ace randomfiles and
-sensitivity vectors corresponding to the desired reaction is required.
+The python script used for the calculation of the error propagation is "bin_sol.py". To run the script properly a suitable collection of ace randomfiles and sensitivity vectors corresponding to the desired reaction is required.
+The sensitivity vectors need to be .csv files, with the left column being the energies and the right column being
+the sensitivity values. Sensitivity vectors can for example be fetched from DICE: https://www.oecd-nea.org/jcms/pl_20293/database-for-icsbep-dice. The sensitivity vectors will need to be manually copied into a .csv file if fetched from DICE. ACE files can for example be processed with NJOY. 
+
 1. The script when run will open a window and prompt the user to select a directory where
 the utilized randomfiles are.
 2. It will then propose a list of reactions, whereas the last option is to manually add a reaction. The so called "other" option
