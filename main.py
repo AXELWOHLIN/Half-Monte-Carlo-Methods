@@ -180,7 +180,6 @@ def choose_reaction(directory, tot=0):
         reaction_ind= int(name_dict[chosen_key])
         return reaction_ind
 
-
 def check_mt(directory, reaction_ind):
     """
     Checks if the MT number is valid and exists in the ace files.
@@ -432,7 +431,7 @@ def main():
         plt.hist(results_vector, bins=25, density=False)
 
         # Set the plot title and axis labels
-        plt.title(r'$\Delta$ $k_{{eff}}$ ' + f'prompt,nubar')
+        plt.title(r'$\Delta$ $k_{{eff}}$ ' + f'{reaction_ind}')
         plt.xlabel(r'$\Delta$ $k_{{eff}}$ (pcm)')
         plt.ylabel('Number of Cases')
         plt.figtext(.65, .85, f"mean = {round(mean,4)}")
@@ -440,7 +439,7 @@ def main():
         plt.figtext(.65, .75, f"kurtosis = {round(kurt,4)}")
         plt.figtext(.65, .7, f"skewness = {round(skewness,4)}")
 
-        plt.savefig(results_dir+'/figure_prompt,nubar_deltakeff.png')
+        plt.savefig(results_dir+f'/figure_{reaction_ind}_deltakeff.png')
         plt.clf()
         print(f"mean: {mean}")
         print(f"std dev: {std_dev}")
