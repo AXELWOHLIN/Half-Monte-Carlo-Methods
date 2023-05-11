@@ -16,7 +16,7 @@ from scipy.stats import norm, kurtosis
 
 
 
-directory = 'U235.nuss.10.10.2016'
+directory = '/home/axelwohlin/Desktop/kand/ACE_files/Pu239.nuss.05.10.2016'
 
 def cross_section(reaction_ind, ace_file, directory):
     """Picks out the cross sections from the ACE-files. 
@@ -126,7 +126,7 @@ for dict_key in plot_dict.keys():
     axs.set_ylabel("Cross section(Barn)")
 
 
-    plt.savefig(f'new_cross_section_plots/figure_{name_list[dict_key]}.png')
+    plt.savefig(f'results/new_cross_section_plots/figure_{name_list[dict_key]}.png')
     plt.clf
 if os.path.exists('new_file.ace'):  
     os.remove('new_file.ace')
