@@ -113,6 +113,8 @@ def total_reactions_txt(directory):
                     next_line = next(f, None)
                     if next_line.split()[0]=='0':
                         header_found = True
+                        for i in range(2):
+                            f.readline()
                     continue
                 else:
                     if header_found == True and line.startswith(' '):
@@ -120,8 +122,7 @@ def total_reactions_txt(directory):
                     else:   
                         header_found = False
         sens_vec = np.array(sens_vec)
-        sens_vec = sens_vec[11:(len(energy_vector)+10)]
-        sens_vec = np.append(sens_vec,0)
+        sens_vec = sens_vec[:len(energy_vector)]
         sensitivity_dict[reaction_ind] =( [energy_vector[::-1],sens_vec[::-1]] )
     return sensitivity_dict
 
