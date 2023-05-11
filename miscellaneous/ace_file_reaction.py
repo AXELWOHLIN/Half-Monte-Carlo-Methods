@@ -16,8 +16,8 @@ from scipy.stats import norm, kurtosis
 
 
 
-ace_file = 'U235.nuss.10.10.2016/U235-n.ace_0000'
-directory = 'U235.nuss.10.10.2016'
+ace_file = '/home/axelwohlin/Desktop/kand/ACE_files/Pu239.nuss.05.10.2016/Pu239-n.ace_0000'#'U235.nuss.10.10.2016/U235-n.ace_0000'
+directory = '/home/axelwohlin/Desktop/kand/ACE_files/Pu239.nuss.05.10.2016'#'U235.nuss.10.10.2016'
 
 with open(ace_file, 'rb') as infile:
     ace_file_contents = infile.read()
@@ -39,7 +39,7 @@ file_contents = lib.tables[first_word]
 
 
 reaction = file_contents.reactions
-print(file_contents.models.chi())
+print(reaction)
 for key, value in reaction.items():
     mt_number = key
     print(rx.label(int(mt_number)))

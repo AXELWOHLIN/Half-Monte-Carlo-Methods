@@ -76,16 +76,16 @@ def ace_reader(ace_file, directory):
     file_contents = lib.tables[first_word]
 
     return file_contents
+#elastic, fission, n2n,n3n,ngamma,inelastic,nubar
 
-
-#name_dict = {"n,2n":(16),"n,3n":(17),"n,4n":(37) \
-#            ,"fission":(18), "elastic":(2) \
-#                 ,"inelastic":(4), "n,gamma":(102) ,"total":(1), "promt,nubar":(456), "nubar":(452)}
+#name_dict = {"n,2n":(16) \
+ #          ,"fission":(18), "elastic":(2) \
+  #              ,"inelastic":(4), "n,gamma":(102) ,"total":(1)}
 #name_dict = {"n,2n":(16),"n,3n":(17),"n,4n":(37)}
 #name_dict = {"fission":(18), "elastic":(2),"inelastic":(4), "n,gamma":(102)}
 #name_dict = {"total":(1), "promt,nubar":(456), "nubar":(452)}
-name_dict = {"total":(1)}
-
+#name_dict = {"fission":(18), "elastic":(2) ,"inelastic":(4)}
+name_dict= {"n,3n":(17),"nubar":(456),"n,gamma":(102)}
 name_list = []
 for i in name_dict.keys():
     name_list.append(i)
@@ -118,15 +118,13 @@ for dict_key in plot_dict.keys():
         axs.loglog(x, y)  # plot the vector and add a label
     
     # Step 4: Customize the subplots
-    
-    axs.set_xticks([], minor=True)
-    axs.xaxis.set_major_locator(plt.MaxNLocator(5))
+    #axs.set_xticks([], minor=True)
+    #axs.xaxis.set_major_locator(plt.MaxNLocator(5))
     axs.set_title(f'Cross section of {name_list[dict_key]}')
     axs.set_xlabel("Energy(MeV)")
     axs.set_ylabel("Cross section(Barn)")
-
-
-    plt.savefig(f'results/new_cross_section_plots/figure_{name_list[dict_key]}.png')
+    plt.savefig(f"/home/axelwohlin/Desktop/kand/results/plutonium_xs_plots/figure_{name_list[dict_key]}.png")
     plt.clf
+
 if os.path.exists('new_file.ace'):  
     os.remove('new_file.ace')
