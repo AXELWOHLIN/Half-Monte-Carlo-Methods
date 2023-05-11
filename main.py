@@ -73,7 +73,7 @@ def total_reactions_txt(directory):
     Returns:
         sensitivity_dict: A dictionary containing sensitivity vectors with a corresponding energy vectors for each reaction.
     """
-    name_dict = {'2':'elastic', '4':'inelastic', '16':'n,2n', '17':'n,3n', '18':'fission','452':'chi','456':'prompt,chi', '102':'n,gamma', '37':'n,4n'}
+    name_dict = {'2':'elastic', '4':'inelastic', '16':'n,2n', '18':'fission','452':'chi','456':'prompt,chi', '102':'n,gamma'}
     energy_vector = []
     print("\nPlease choose a suitable Dice text file of sensitivity vectors:")
     root = Tk()
