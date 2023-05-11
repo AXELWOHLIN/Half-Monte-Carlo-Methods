@@ -16,8 +16,13 @@ from scipy.stats import norm, kurtosis
 
 
 
+<<<<<<< HEAD
 ace_file = '/home/axelwohlin/Desktop/kand/ACE_files/Pu239.nuss.05.10.2016/Pu239-n.ace_0000'#'U235.nuss.10.10.2016/U235-n.ace_0000'
 directory = '/home/axelwohlin/Desktop/kand/ACE_files/Pu239.nuss.05.10.2016'#'U235.nuss.10.10.2016'
+=======
+ace_file = 'ACE_files/Pu239.nuss.05.10.2016/Pu239-n.ace_0000'
+directory = 'ACE_files/Pu239.nuss.05.10.2016'
+>>>>>>> f66184d (nya plots)
 
 with open(ace_file, 'rb') as infile:
     ace_file_contents = infile.read()
