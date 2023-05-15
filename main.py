@@ -60,11 +60,11 @@ def choose_csv(reaction_ind, directory):
         sens_vector_energy = data[:, 0]
         sens_vector_values = data[:, 1]
     elif int(choice) == 2:
-        reaction_dict = total_reactions_txt(directory)
-        sens_vector_energy, sens_vector_values = reaction_dict[str(reaction_ind)]
+        reaction_dict = total_reactions_txt(directory, reaction_ind)
+        sens_vector_energy, sens_vector_values = reaction_dict[reaction_ind]
     return sens_vector_energy, sens_vector_values
 
-def total_reactions_txt(directory):
+def total_reactions_txt(directory, reaction_ind):
     """
     Creates a dictionary of sensitivity vectors by fetching data from a Dice texftile. The textfile is read with the help
     of a list of reactions.
@@ -73,7 +73,6 @@ def total_reactions_txt(directory):
     Returns:
         sensitivity_dict: A dictionary containing sensitivity vectors with a corresponding energy vectors for each reaction.
     """
-    name_dict = {'2':'elastic', '4':'inelastic', '16':'n,2n', '18':'fission','452':'chi','456':'prompt,chi', '102':'n,gamma'}
     energy_vector = []
     print("\nPlease choose a suitable Dice text file of sensitivity vectors:")
     root = Tk()
@@ -104,26 +103,34 @@ def total_reactions_txt(directory):
         first_word = first_line.split('.')[0]
 
     sensitivity_dict = {}
-    for reaction_ind, reaction_name  in name_dict.items():
-        sens_vec = []
-        with open(text_file_path) as f:
-            header_found = False
-            for line in f:
-                if first_word in line and reaction_name in line:
-                    next_line = next(f, None)
-                    if next_line.split()[0]=='0':
-                        header_found = True
-                        for i in range(2):
-                            f.readline()
-                    continue
-                else:
-                    if header_found == True and line.startswith(' '):
-                        data = [sens_vec.append(float(x)) for x in line.split()]
-                    else:   
-                        header_found = False
-        sens_vec = np.array(sens_vec)
-        sens_vec = sens_vec[:len(energy_vector)]
-        sensitivity_dict[reaction_ind] =( [energy_vector[::-1],sens_vec[::-1]] )
+
+    sens_vec = []
+    with open(text_file_path) as f:
+        header_found = False
+        correct_header = False
+        skip = True
+        for line in f:
+            if first_word in line and str(reaction_ind) in line.split():
+                header_found = True
+                correct_header = False
+                continue
+            elif header_found == True:
+                if line.split()[0] == '0':
+                    correct_header = True
+                header_found = False
+            elif correct_header == True and line.startswith(' '):
+                if skip==True:
+                    f.readline()
+                    skip=False
+                    continue 
+                data = [sens_vec.append(float(x)) for x in line.split()]
+            else:   
+                header_found = False
+    sens_vec = np.array(sens_vec)
+    sens_vec = sens_vec[:len(energy_vector)-1]
+    sens_vec = np.append(sens_vec, 0.0)
+    print(sens_vec)
+    sensitivity_dict[reaction_ind] =( [energy_vector[::-1],sens_vec[::-1]] )
     return sensitivity_dict
 
 def total_reactions_csv(directory):
@@ -227,7 +234,7 @@ def add_reactions(directory):
                 total_dictionary = total_reactions_csv(directory)
                 reaction_dict[reaction_ind] = total_dictionary 
             elif total_meth == "2":
-                total_dictionary = total_reactions_txt(directory) 
+                total_dictionary = total_reactions_txt(directory, reaction_ind) 
                 reaction_dict[reaction_ind] = total_dictionary
         else:
             sens_vector_energy, sens_vector_values = choose_csv(reaction_ind, directory)
