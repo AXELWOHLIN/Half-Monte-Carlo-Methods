@@ -129,7 +129,6 @@ def total_reactions_txt(directory, reaction_ind):
     sens_vec = np.array(sens_vec)
     sens_vec = sens_vec[:len(energy_vector)-1]
     sens_vec = np.append(sens_vec, 0.0)
-    print(sens_vec)
     sensitivity_dict[reaction_ind] =( [energy_vector[::-1],sens_vec[::-1]] )
     return sensitivity_dict
 
@@ -234,8 +233,16 @@ def add_reactions(directory):
                 total_dictionary = total_reactions_csv(directory)
                 reaction_dict[reaction_ind] = total_dictionary 
             elif total_meth == "2":
-                total_dictionary = total_reactions_txt(directory, reaction_ind) 
-                reaction_dict[reaction_ind] = total_dictionary
+                choice = "y"
+                print("You will now be prompted to select the available cross sections \
+                     to create the total directory \n")
+                reaction_dict[1] = {}
+                while choice == "y":
+                    reaction_ind = choose_reaction(directory, 1)
+                    total_dictionary = total_reactions_txt(directory, reaction_ind)
+                    choice = input("Do you have more reactions to add? [y/n]: ")
+                    sens_vector_energy, sens_vector_values = total_dictionary[reaction_ind]
+                    reaction_dict[1][reaction_ind] = [sens_vector_energy, sens_vector_values]
         else:
             sens_vector_energy, sens_vector_values = choose_csv(reaction_ind, directory)
             reaction_dict[reaction_ind] = [sens_vector_energy, sens_vector_values]
@@ -346,7 +353,7 @@ def HMCcalc(reaction_dict, reaction_ind, directory, central_file):
     if int(reaction_ind) == 1:
         results_vector = []
         for reaction_number in reaction_dict[reaction_ind].keys():
-            sens_energy, sens_values = (reaction_dict[1])[reaction_number]
+            sens_energy, sens_values = reaction_dict[1][reaction_number]
             central_xs, energy = cross_section(reaction_number, central_file, directory)
             bin_avg_central = bin_averager(central_xs, energy, sens_energy)
 
