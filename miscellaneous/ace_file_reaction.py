@@ -12,6 +12,7 @@ from tkinter import filedialog
 from tkinter.filedialog import askopenfilename
 from scipy.stats import skew
 from scipy.stats import norm, kurtosis
+from pyne.xs import models
 
 
 
@@ -38,9 +39,14 @@ lib.tables
 
 file_contents = lib.tables[first_word]
 
-
+energy = file_contents.energy
+xs_chi = models.chi(energy)
+print(len(xs_chi))
+plt.plot(energy,  xs_chi)
+plt.show()
 
 reaction = file_contents.reactions
+
 for key, value in reaction.items():
     mt_number = key
     print(rx.label(int(mt_number)))
