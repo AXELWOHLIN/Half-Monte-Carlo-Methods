@@ -39,11 +39,12 @@ lib.tables
 
 file_contents = lib.tables[first_word]
 
+
+
 energy = file_contents.energy
 xs_chi = models.chi(energy)
-print(len(xs_chi))
-plt.plot(energy,  xs_chi)
-plt.show()
+
+chi = file_contents.xs['chi'] 
 
 reaction = file_contents.reactions
 
