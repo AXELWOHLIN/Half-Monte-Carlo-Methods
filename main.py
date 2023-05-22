@@ -448,7 +448,7 @@ def main():
         plt.hist(results_vector, bins=25, density=False)
 
         # Set the plot title and axis labels
-        plt.title(r'$\Delta$ $k_{{eff}}$ MT: ' + f'{reaction_ind}')
+        plt.title(r'$\Delta$ $k_{{eff}}$ for ' + 'nubar')
         plt.xlabel(r'$\Delta$ $k_{{eff}}$ (pcm)')
         plt.ylabel('Number of Cases')
         plt.figtext(.65, .85, f"mean = {round(mean,4)}")
