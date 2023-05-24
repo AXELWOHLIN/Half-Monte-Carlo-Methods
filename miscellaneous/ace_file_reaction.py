@@ -12,12 +12,13 @@ from tkinter import filedialog
 from tkinter.filedialog import askopenfilename
 from scipy.stats import skew
 from scipy.stats import norm, kurtosis
+from pyne.xs import models
 
 
 
 
-ace_file = '/home/axelwohlin/Desktop/kand/ACE_files/Pu239.nuss.05.10.2016/Pu239-n.ace_0000'#'U235.nuss.10.10.2016/U235-n.ace_0000'
-directory = '/home/axelwohlin/Desktop/kand/ACE_files/Pu239.nuss.05.10.2016'#'U235.nuss.10.10.2016'
+ace_file = 'ACE_files/Pu239.nuss.05.10.2016/Pu239-n.ace_0000'
+directory = 'ACE_files/Pu239.nuss.05.10.2016'
 
 with open(ace_file, 'rb') as infile:
     ace_file_contents = infile.read()
@@ -35,11 +36,18 @@ with open(dir_file) as f:
     first_word = first_line.split()[0]
 lib.read(first_word)
 lib.tables
+
 file_contents = lib.tables[first_word]
 
 
+
+energy = file_contents.energy
+xs_chi = models.chi(energy)
+
+chi = file_contents.xs['chi'] 
+
 reaction = file_contents.reactions
-print(reaction)
+
 for key, value in reaction.items():
     mt_number = key
     print(rx.label(int(mt_number)))

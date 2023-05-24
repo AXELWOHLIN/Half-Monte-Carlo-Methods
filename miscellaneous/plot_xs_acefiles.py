@@ -16,7 +16,7 @@ from scipy.stats import norm, kurtosis
 
 
 
-directory = '/home/axelwohlin/Desktop/kand/ACE_files/Pu239.nuss.05.10.2016'
+directory = 'ACE_files/Pu239.nuss.05.10.2016'
 
 def cross_section(reaction_ind, ace_file, directory):
     """Picks out the cross sections from the ACE-files. 
@@ -85,7 +85,7 @@ def ace_reader(ace_file, directory):
 #name_dict = {"fission":(18), "elastic":(2),"inelastic":(4), "n,gamma":(102)}
 #name_dict = {"total":(1), "promt,nubar":(456), "nubar":(452)}
 #name_dict = {"fission":(18), "elastic":(2) ,"inelastic":(4)}
-name_dict= {"n,3n":(17),"nubar":(456),"n,gamma":(102)}
+name_dict= {"nubar":(456)}
 name_list = []
 for i in name_dict.keys():
     name_list.append(i)
@@ -123,7 +123,7 @@ for dict_key in plot_dict.keys():
     axs.set_title(f'Cross section of {name_list[dict_key]}')
     axs.set_xlabel("Energy(MeV)")
     axs.set_ylabel("Cross section(Barn)")
-    plt.savefig(f"/home/axelwohlin/Desktop/kand/results/plutonium_xs_plots/figure_{name_list[dict_key]}.png")
+    plt.savefig(f"results/plutonium_xs_plots/figure_{name_list[dict_key]}.png")
     plt.clf
 
 if os.path.exists('new_file.ace'):  
