@@ -437,7 +437,7 @@ def main():
     reaction_dir = add_reactions(directory)
     reactions_ind = list(reaction_dir.keys())
     central_file=central_file_decider(directory)
-    results_dir = 'results/results_majd'
+    results_dir = 'results/results_new'
 
     for reaction_ind in reactions_ind:
         results_vector = HMCcalc(reaction_dir, reaction_ind, directory, central_file)
