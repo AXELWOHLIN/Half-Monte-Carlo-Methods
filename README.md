@@ -8,23 +8,20 @@ the same library the script will still be able to produce a result when they are
 
 
 # Installations:
-* If you want to use the files using ENDFtk for ENDF file processing, see here for an installation tutorial: https://github.com/njoy/ENDFtk/blob/master/README.md
 * The scripts found in this repository have an requirement of the PyNE module which installation instructions can be found on the pyne website: https://pyne.io/
 * If you want to run total Monte Carlo simulations using the scripts in the repository you need to install OpenMC.
 Installation tutorial can be found ħere: https://docs.openmc.org/en/stable/quickinstall.html
 
 # Scripts:
-## bin_sol.py:
-The python script used for the calculation of the error propagation is "bin_sol.py". To run the script properly a suitable collection of ace randomfiles and sensitivity vectors corresponding to the desired reaction is required.
-The sensitivity vectors need to be .csv files, with the left column being the energies and the right column being
-the sensitivity values. Sensitivity vectors can for example be fetched from DICE: https://www.oecd-nea.org/jcms/pl_20293/database-for-icsbep-dice. The sensitivity vectors will need to be manually copied into a .csv file if fetched from DICE. ACE files can for example be processed with NJOY. 
+## main.py:
+The python script used for the calculation of the error propagation is "main.py". To run the script properly a suitable collection of ace randomfiles and sensitivity vectors corresponding to the desired reaction is required.
+The sensitivity vectors need to be either .csv files or .txt files. For .csv files the left column should be the energies and the right column the sensitivity values. Total sensitivity within bin is required for the sensitivity vectors. Sensitivity vectors can for example be fetched from DICE: https://www.oecd-nea.org/jcms/pl_20293/database-for-icsbep-dice. The sensitivity vectors can be manually copied into a .csv file if fetched from DICE, or a .txt file can be retrieved. The .txt file reader is the easiest to use. However, if problems arise, a .csv file should always work. ACE files can for example be processed with NJOY. 
 
 1. The script when run will open a window and prompt the user to select a directory where
 the utilized randomfiles are.
 2. It will then propose a list of reactions, whereas the last option is to manually add a reaction. The so called "other" option
 in the reaction list will print an error message if the entered reaction is not included in the given ace randomfiles.
-3. The user is then required to either propose corresponding sensivity vector for the reaction in the shape of either a csvfile or a textfile generated from
-dice where the script wants the total sensitivity within bin.
+3. The user is then required to either propose corresponding sensivity vector for the reaction in the shape of either a csvfile or a textfile generated from dice where the script wants the total sensitivity within bin.
 4. After the user is given a option to add further reactions in the same run which will be formatted the same way as previous additions.
 5. Finally the user is given the option to manually select the central ace file otherwise the first file in the directory will be automatically selected.
 
@@ -66,3 +63,7 @@ The script will also produce a graph:
 ![Graph for delta_k_eff in pcm for each randomfile](result_plots_binavg/figure_4.png)
 # Conclusion:
 We hope this readme.md and the scripts found in the repository will be useful. Thank you.
+
+// TOVA developers
+
+// TOVA developers
