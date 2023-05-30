@@ -65,5 +65,3 @@ The script will also produce a graph:
 We hope this readme.md and the scripts found in the repository will be useful. Thank you.
 
 // TOVA developers
-
-// TOVA developers
