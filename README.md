@@ -55,7 +55,7 @@ Please choose a sensitivity vector in .csv format:
 Do you want to add another reaction? [y/n]: n
 Do you want to choose central file? [y/n]: n
 ```
-After a brief calculation the script will produce an output:
+After a brief calculation the script will produce an output, ex:
 ```
 mean: 2.0078138155942216
 std dev: 264.73216695302557
@@ -66,5 +66,3 @@ The script will also produce a graph:
 ![Graph for delta_k_eff in pcm for each randomfile](result_plots_binavg/figure_4.png)
 # Conclusion:
 We hope this readme.md and the scripts found in the repository will be useful. Thank you.
-
-TYRA hellooo
