@@ -6,6 +6,8 @@ criticality in integral experiments. The Half Monte Carlo calculation is done wi
 and a suitable collection of randomfiles in ace format. Although the results will stand more correct when the sensitivity vector and randomfiles come from
 the same library the script will still be able to produce a result when they are not.
 
+# Paper:
+The paper is available to view in the file called "Tova_Report"
 
 # Installations:
 * The scripts found in this repository have an requirement of the PyNE module which installation instructions can be found on the pyne website: https://pyne.io/
