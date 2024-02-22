@@ -7,7 +7,7 @@ and a suitable collection of randomfiles in ace format. Although the results wil
 the same library the script will still be able to produce a result when they are not.
 
 # Paper:
-The paper is available to view in the file called "Tova_Report"
+The paper is available to view in the file called "TOVA_Report.."
 
 # Installations:
 * The scripts found in this repository have an requirement of the PyNE module which installation instructions can be found on the pyne website: https://pyne.io/
